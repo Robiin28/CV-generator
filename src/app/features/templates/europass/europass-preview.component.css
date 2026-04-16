@@ -34,23 +34,23 @@
 }
 
 .cv-name {
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   color: #2563eb;
-  font-size: 2rem;
-  font-weight: 300;
-  letter-spacing: 0.02rem;
+  font-size: 2.2rem;
+  font-weight: 700;
+  letter-spacing: -0.01rem;
   margin: 0 0 0.1rem 0;
-  text-transform: uppercase;
-  line-height: 1;
+  text-transform: none;
+  line-height: 1.1;
 }
 
 .cv-title {
-  font-family: 'Roboto', sans-serif;
-  font-size: 0.85rem;
-  color: #1e293b;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 0.9rem;
+  color: #475569;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
 }
 
 .cv-header-right-group {
@@ -86,12 +86,12 @@
 
 .cv-section-label {
   grid-column: 1;
-  font-family: 'Montserrat', sans-serif;
+  font-family: 'Open Sans', sans-serif;
   color: #1e293b;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 0.75rem;
   text-align: left;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.02em;
   padding: 0.35rem 0.5rem 0.1rem 0; /* Reduced top padding from 0.75rem */
   text-transform: uppercase;
   display: flex;
@@ -140,8 +140,8 @@
 /* SECTION FIRST ITEM SYNC removed as we now use unified grid flow */
 
 .cv-entry-title { 
-  font-family: 'Montserrat', sans-serif;
-  font-size: 0.95rem; 
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem; 
   font-weight: 700; 
   color: #0f172a; 
   margin: 0 0 0.2rem 0; 
