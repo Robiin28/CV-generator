@@ -74,7 +74,16 @@ import { ExecutivePreviewComponent } from '../../templates/executive/executive-p
                      <div class="input-grid">
                        <div class="field"><label>Position</label><input class="input-saas" [value]="exp.jobTitle" (input)="store.updateExperience(exp.id, { jobTitle: $any($event.target).value })"></div>
                        <div class="field"><label>Company</label><input class="input-saas" [value]="exp.company" (input)="store.updateExperience(exp.id, { company: $any($event.target).value })"></div>
-                       <div class="field full"><label>Description</label><textarea class="input-saas" rows="4" [value]="exp.description" (input)="store.updateExperience(exp.id, { description: $any($event.target).value })"></textarea></div>
+                       <div class="field"><label>Location</label><input class="input-saas" [value]="exp.location" (input)="store.updateExperience(exp.id, { location: $any($event.target).value })"></div>
+                       <div class="field"><label>Start Date</label><input class="input-saas" [value]="exp.startDate" (input)="store.updateExperience(exp.id, { startDate: $any($event.target).value })" placeholder="e.g. June 2020"></div>
+                       <div class="field"><label>End Date</label><input class="input-saas" [value]="exp.endDate" (input)="store.updateExperience(exp.id, { endDate: $any($event.target).value })" [disabled]="exp.current" placeholder="e.g. Present"></div>
+                       <div class="field" style="display:flex; align-items:center; gap:8px; padding-top:24px">
+                         <input type="checkbox" [id]="'curr-' + exp.id" [checked]="exp.current" (change)="store.updateExperience(exp.id, { current: $any($event.target).checked })">
+                         <label [for]="'curr-' + exp.id" style="margin:0">Currently Work Here</label>
+                       </div>
+                       <div class="field full"><label>Description / Achievements (One per line)</label>
+                         <textarea class="input-saas" rows="4" [value]="exp.description" (input)="store.updateExperience(exp.id, { description: $any($event.target).value })" placeholder="• Achieved X using Y..."></textarea>
+                       </div>
                      </div>
                    </div>
                  }
@@ -87,8 +96,14 @@ import { ExecutivePreviewComponent } from '../../templates/executive/executive-p
                    <div class="item-card">
                      <button class="del-btn" (click)="store.removeEducation(edu.id)">✕</button>
                      <div class="input-grid">
-                       <div class="field"><label>Degree</label><input class="input-saas" [value]="edu.degree" (input)="store.updateEducation(edu.id, { degree: $any($event.target).value })"></div>
-                       <div class="field"><label>School</label><input class="input-saas" [value]="edu.school" (input)="store.updateEducation(edu.id, { school: $any($event.target).value })"></div>
+                       <div class="field"><label>Degree / Certificate</label><input class="input-saas" [value]="edu.degree" (input)="store.updateEducation(edu.id, { degree: $any($event.target).value })" placeholder="e.g. Master of Science"></div>
+                       <div class="field"><label>University / School</label><input class="input-saas" [value]="edu.school" (input)="store.updateEducation(edu.id, { school: $any($event.target).value })" placeholder="e.g. London School of Economics"></div>
+                       <div class="field"><label>Field of Study</label><input class="input-saas" [value]="edu.fieldOfStudy" (input)="store.updateEducation(edu.id, { fieldOfStudy: $any($event.target).value })" placeholder="e.g. Media & Communications"></div>
+                       <div class="field"><label>Start Date</label><input class="input-saas" [value]="edu.startDate" (input)="store.updateEducation(edu.id, { startDate: $any($event.target).value })" placeholder="e.g. 2024"></div>
+                       <div class="field"><label>End Date</label><input class="input-saas" [value]="edu.endDate" (input)="store.updateEducation(edu.id, { endDate: $any($event.target).value })" placeholder="e.g. Present"></div>
+                       <div class="field full"><label>Description (Optional)</label>
+                         <textarea class="input-saas" rows="3" [value]="edu.description" (input)="store.updateEducation(edu.id, { description: $any($event.target).value })" placeholder="Focused on strategic communication..."></textarea>
+                       </div>
                      </div>
                    </div>
                  }
