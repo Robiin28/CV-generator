@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ResumeForge</title>
+  <script type="text/javascript">
+    // GitHub Pages SPA redirect workaround.
+    // When GitHub Pages returns a 404, this page catches it and
+    // redirects back to the root with the original path encoded as a query param.
+    var pathSegmentsToKeep = 1; // 1 = keep the repo name in the path (/CV-generator)
+
+    var l = window.location;
+    l.replace(
+      l.protocol + '//' + l.hostname + (l.port ? ':' + l.port : '') +
+      l.pathname.split('/').slice(0, 1 + pathSegmentsToKeep).join('/') + '/?/' +
+      l.pathname.slice(1).split('/').slice(pathSegmentsToKeep).join('/').replace(/&/g, '~and~') +
+      (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
+      l.hash
+    );
+  </script>
+</head>
+<body></body>
+</html>

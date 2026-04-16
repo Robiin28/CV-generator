@@ -1,0 +1,219 @@
+:host {
+  display: block;
+  width: 100%;
+}
+
+.cv-document-paged {
+  max-width: 210mm;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 10px 15px rgba(0,0,0,0.05);
+}
+
+.cv-content-wrapper { 
+  padding: 10mm 12mm; 
+}
+
+/* AGGRESSIVE COMPRESSION GRID */
+.grid-layout {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  width: 100%;
+  position: relative;
+  /* Background gradient removed to prevent slicing issues during PDF generation */
+}
+
+.cv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #1e293b;
+  padding-bottom: 0.75rem;
+  margin-bottom: 0.75rem;
+  gap: 1.5rem;
+}
+
+.cv-name {
+  font-family: 'Montserrat', sans-serif;
+  color: #2563eb;
+  font-size: 2rem;
+  font-weight: 300;
+  letter-spacing: 0.02rem;
+  margin: 0 0 0.1rem 0;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.cv-title {
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.85rem;
+  color: #1e293b;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.cv-header-right-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.25rem;
+}
+
+.cv-contact-item {
+  font-size: 0.72rem;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.contact-icon {
+  width: 13px;
+  height: 13px;
+  fill: #2563eb;
+}
+
+.cv-photo-container {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #f1f5f9;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.cv-section-label {
+  grid-column: 1;
+  font-family: 'Montserrat', sans-serif;
+  color: #1e293b;
+  font-weight: 800;
+  font-size: 0.75rem;
+  text-align: left;
+  letter-spacing: 0.08em;
+  padding: 0.35rem 0.5rem 0.1rem 0; /* Reduced top padding from 0.75rem */
+  text-transform: uppercase;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  border-right: 1.5px solid #2563eb; /* More stable than background gradient for page breaks */
+  padding-bottom: 0.35rem; /* Further reduced from 0.5rem */
+}
+
+.section-icon { 
+  width: 16px; 
+  height: 16px; 
+  fill: #2563eb; 
+  margin-top: 3px;
+}
+
+.cv-section-content { display: contents; }
+
+.cv-summary-text { 
+  grid-column: 2;
+  padding: 0.5rem 0 0.25rem 1rem; /* Reduced from 0.75rem */
+  line-height: 1.3; 
+  font-size: 0.82rem; 
+  color: #334155; 
+}
+
+.cv-date {
+  grid-column: 1;
+  font-size: 0.72rem; 
+  color: #2563eb;
+  font-weight: 700;
+  text-align: right;
+  padding-right: 1.2rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.5rem; /* Further reduced from 0.85rem */
+  border-right: 1.5px solid #2563eb;
+}
+
+.cv-entry-info, .cv-skill-wrapper, .cv-lang-wrapper {
+  grid-column: 2;
+  padding-left: 1rem;
+  padding-top: 0.4rem;
+  padding-bottom: 0.5rem; /* Matches left-column padding reduction */
+}
+
+/* SECTION FIRST ITEM SYNC removed as we now use unified grid flow */
+
+.cv-entry-title { 
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.95rem; 
+  font-weight: 700; 
+  color: #0f172a; 
+  margin: 0 0 0.2rem 0; 
+}
+
+.cv-entry-subtitle { 
+  font-size: 0.8rem; 
+  color: #475569; 
+  font-weight: 600; 
+  margin-bottom: 6px; 
+}
+
+.cv-entry-description { 
+  font-size: 0.78rem; 
+  line-height: 1.3; 
+  color: #334155; 
+}
+
+.europass-bullets { margin: 8px 0; padding-left: 1.1rem; list-style-type: square; }
+.europass-bullets li { 
+  margin-bottom: 4px; 
+  line-height: 1.4; 
+  color: #475569; 
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.cv-skill-entry { margin-bottom: 1rem; }
+.cv-skill-cat { 
+  font-size: 0.7rem; 
+  font-weight: 800; 
+  color: #1e293b; 
+  margin-bottom: 0.5rem; 
+  text-transform: uppercase;
+}
+.cv-skills-list { display: flex; flex-wrap: wrap; gap: 8px; }
+.cv-skill-tag { 
+  background: #f1f5f9; 
+  padding: 4px 10px; 
+  border-radius: 4px; 
+  font-size: 0.68rem; 
+  color: #1e40af; 
+  border-left: 3px solid #2563eb; 
+  font-weight: 600; 
+}
+
+.cv-lang-grid { display: flex; flex-direction: column; gap: 8px; }
+.cv-lang-item { 
+  display: flex; 
+  justify-content: space-between; 
+  font-size: 0.8rem; 
+  color: #334155; 
+  border-bottom: 1.5px solid #f1f5f9; 
+  padding-bottom: 6px; 
+}
+.cv-lang-name { font-weight: 700; color: #1e293b; }
+.cv-lang-level { color: #2563eb; font-weight: 800; font-size: 0.68rem; text-transform: uppercase; }
+
+/* PRINT STYLES - ISOLATED FOR SAFETY */
+@media print {
+  .cv-document-paged {
+    background: white !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+  }
+  .cv-content-wrapper { padding: 0 !important; }
+  .cv-entry-info, .cv-header, .cv-section-label, .cv-summary-text { 
+    break-inside: avoid; 
+    page-break-inside: avoid;
+    padding-top: 4mm; /* Prevent convergence at top of new page */
+  }
+  .cv-document-paged h1, .cv-document-paged h2, .cv-document-paged h3 { break-after: avoid; }
+}

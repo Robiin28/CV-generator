@@ -1,0 +1,332 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Premium SaaS Palette */
+  --color-primary: #0A2540;     /* Deep Navy */
+  --color-primary-soft: rgba(10, 37, 64, 0.1);
+  --color-accent: #334155;      /* Charcoal Gray */
+  
+  --bg-main: #FFFFFF;
+  --bg-sidebar: #0A2540;
+  --bg-surface: #F8FAFC;        /* Light Gray Cards */
+  
+  --text-heading: #0F172A;      /* Dark Charcoal */
+  --text-body: #475569;         /* Medium Gray */
+  --text-muted: #64748B;
+  --text-on-navy: #FFFFFF;
+  
+  --border-light: #E2E8F0;
+  --border-active: #0A2540;
+  
+  --success: #10B981;           /* Soft Emerald */
+  
+  /* Structural Tokens */
+  --sidebar-width: 250px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-premium: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  --transition-base: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ─────────────────────────────────────────────────────── */
+  /* LANDING PAGE DARK THEME VARIABLES                       */
+  /* ─────────────────────────────────────────────────────── */
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
+  --bg-secondary: rgba(255, 255, 255, 0.05);
+  --bg-tertiary: rgba(255, 255, 255, 0.08);
+  --border-color: rgba(255, 255, 255, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --primary-teal: #00f5d4;
+  --gradient-teal: linear-gradient(135deg, #00f5d4, #00b4d8);
+  --transition-fast: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─────────────────────────────────────────────────────── */
+/* GLOBAL DARK MODE THEME                                  */
+/* ─────────────────────────────────────────────────────── */
+.dark {
+  --bg-main: #050811;           /* Deep Black-Navy */
+  --bg-sidebar: #020617;        /* Almost Black */
+  --bg-surface: #0f172a;        /* Slate-900 Card Surface */
+  
+  --text-heading: #F8FAFC;      /* Off-White */
+  --text-body: #94A3B8;         /* Slate-400 */
+  --text-muted: #64748B;
+  
+  --border-light: #1e293b;      /* Slate-800 */
+  --border-active: #3b82f6;     /* Bright Blue */
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+  
+  --color-primary: #3b82f6;
+  --color-primary-soft: rgba(59, 130, 246, 0.15);
+  
+  /* Landing Specific Dark Overrides */
+  --bg-secondary: rgba(255, 255, 255, 0.03);
+  --bg-tertiary: rgba(255, 255, 255, 0.05);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-main);
+  color: var(--text-body);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+/* Only apply dark heading colors outside the dark landing page */
+:not(.landing-container) > h1,
+:not(.landing-container) > h2,
+:not(.landing-container) > h3,
+:not(.landing-container) > h4 {
+  color: var(--text-heading);
+}
+
+/* Layout Core */
+.app-shell {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* Premium Utility Classes */
+.glass-static {
+  background: #FFFFFF;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+}
+
+/* LANDING PAGE UTILITY CLASSES */
+.glass {
+  background: var(--glass-bg, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.12));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: var(--radius-lg);
+}
+
+.card {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.gradient-teal {
+  background: linear-gradient(135deg, #00f5d4, #00b4d8);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  color: #FFFFFF;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  border: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: var(--transition-fast, 0.15s ease);
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+.btn-saas {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.25rem;
+  font-weight: 600;
+  font-size: 0.875rem;
+  border-radius: var(--radius-md);
+  transition: var(--transition-base);
+  cursor: pointer;
+}
+
+.btn-saas-primary {
+  background-color: var(--color-primary);
+  color: #FFFFFF;
+  border: none;
+}
+.btn-saas-primary:hover {
+  background-color: #1a3a5a;
+  transform: translateY(-1px);
+}
+
+.btn-saas-outline {
+  background-color: transparent;
+  color: var(--text-body);
+  border: 1px solid var(--border-light);
+}
+.btn-saas-outline:hover {
+  background-color: var(--bg-surface);
+  border-color: #CBD5E1;
+}
+
+.input-saas {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--text-heading);
+  transition: var(--transition-base);
+}
+.input-saas:focus {
+  outline: none;
+  border-color: var(--border-active);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.badge-ats {
+  background-color: #ECFDF5;
+  color: #059669;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ULTIMATE PDF PRINT ENGINE (Legacy Block Model)
+   ───────────────────────────────────────────────────────────────────────────── */
+@media print {
+  /* Force all elements into simple block model for reliable splitting */
+  .pdf-block-force {
+    display: block !important;
+    width: 100% !important;
+    float: none !important;
+    position: relative !important;
+  }
+
+  /* Atomic Text Protection: No sentence ever gets sliced */
+  .pdf-text-protect, p, li, h1, h2, h3, h4, h5, h6, .editable {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    display: block !important;
+    position: relative !important;
+  }
+
+  /* Stabilize margins to prevent pixel drift */
+  * {
+    box-sizing: border-box !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+  }
+
+  /* Add generous vertical padding between blocks for legibility */
+  .pdf-text-spacer {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* High-fidelity color & text rendering */
+  html, body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-variant-ligatures: none !important;
+  }
+}
+
+/* Helper to force a hard page break if needed */
+.page-break {
+  break-before: page;
+  page-break-before: always;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   MS WORD STYLE PAGED EDITOR
+   ───────────────────────────────────────────────────────────────────────────── */
+.a4-document-editor {
+  background: #f1f5f9;
+  padding: 60px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px; /* Strong physical gap between pages */
+  min-height: 100%;
+}
+
+.a4-page {
+  width: 210mm;
+  height: 297mm;
+  background: #ffffff !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  flex-shrink: 0; /* CRITICAL: Prevent browser from collapsing pages */
+  z-index: 1;
+}
+
+/* Internal Margins for the Document Editor */
+.a4-page-content {
+  padding: 15mm;
+  height: 267mm; /* 297 - 30 (top/bottom margins) */
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* Page Indicator for the UI - Hide during export */
+.a4-page::after {
+  content: "Page " attr(data-page);
+  position: absolute;
+  bottom: 8mm; /* Outside 15mm content area */
+  right: 15mm;
+  font-size: 10px;
+  color: #94a3b8;
+  font-weight: 600;
+  z-index: 10;
+}
+
+.is-exporting .a4-page::after {
+  display: none !important;
+}
+
+.is-exporting .a4-document-editor {
+  padding: 0 !important;
+  gap: 0 !important;
+}
