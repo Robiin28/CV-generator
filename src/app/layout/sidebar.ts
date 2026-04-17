@@ -11,7 +11,7 @@ import { RouterModule } from '@angular/router';
     <aside class="sidebar">
       <div class="sidebar-top">
         <div class="brand">
-          <div class="brand-square">RF</div>
+          <div class="brand-square">F</div>
           <span class="brand-name">ResumeForge</span>
         </div>
 
@@ -53,8 +53,8 @@ import { RouterModule } from '@angular/router';
     }
     .brand-square {
       width: 32px; height: 32px;
-      background: #FFFFFF;
-      color: var(--color-primary);
+      background: #000000;
+      color: #FFFFFF;
       border-radius: 6px;
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 0.9rem;

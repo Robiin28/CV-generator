@@ -12,7 +12,7 @@ import { ThemeService } from '../../core/services/theme.service';
       <nav class="landing-header">
         <div class="header-inner">
           <div class="brand" routerLink="/">
-            <div class="logo-box">RF</div>
+            <div class="logo-box">F</div>
             <span class="logo-text">ResumeForge</span>
           </div>
           
@@ -174,23 +174,23 @@ import { ThemeService } from '../../core/services/theme.service';
             <div class="p-tier">Templates</div>
             <div class="p-price">Europass <span>& more</span></div>
             <ul class="p-features">
-              <li>Official Europass Layout</li>
-              <li>Clean modern format</li>
-              <li>ATS-compatible structure</li>
-              <li>Multi-section support</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Official Europass Layout</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Clean modern format</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> ATS-compatible structure</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Multi-section support</li>
             </ul>
-            <button class="btn-saas-outline" routerLink="/templates">Browse Templates</button>
+            <button class="btn-secondary" routerLink="/templates">Browse Templates</button>
           </div>
           <div class="pricing-card card glass popular">
             <div class="popular-tag">Core Feature</div>
             <div class="p-tier">AI Builder</div>
             <div class="p-price">Free <span>to use</span></div>
             <ul class="p-features">
-              <li>Step-by-step form wizard</li>
-              <li>AI writing suggestions</li>
-              <li>Live preview as you type</li>
-              <li>One-click PDF export</li>
-              <li>No account required to preview</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Step-by-step form wizard</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> AI writing suggestions</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Live preview as you type</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> One-click PDF export</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> No account required to preview</li>
             </ul>
             <button class="btn-saas-primary" routerLink="/builder">Start Building</button>
           </div>
@@ -198,12 +198,12 @@ import { ThemeService } from '../../core/services/theme.service';
             <div class="p-tier">Export</div>
             <div class="p-price">PDF <span>ready</span></div>
             <ul class="p-features">
-              <li>High-fidelity PDF output</li>
-              <li>Consistent multi-page layout</li>
-              <li>Print-ready formatting</li>
-              <li>No watermarks</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> High-fidelity PDF output</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Consistent multi-page layout</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Print-ready formatting</li>
+              <li><svg class="check" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> No watermarks</li>
             </ul>
-            <button class="btn-saas-outline" routerLink="/builder">Try It Now</button>
+            <button class="btn-secondary" routerLink="/builder">Try It Now</button>
           </div>
         </div>
       </section>
@@ -298,7 +298,7 @@ import { ThemeService } from '../../core/services/theme.service';
     }
     .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
     .logo-box { 
-      background: var(--color-primary); 
+      background: #000000; 
       color: #fff; 
       width: 32px; 
       height: 32px; 
@@ -307,19 +307,24 @@ import { ThemeService } from '../../core/services/theme.service';
       align-items: center; 
       justify-content: center; 
       font-weight: 800; 
-      font-size: 0.8rem;
+      font-size: 0.9rem;
     }
     .logo-text { font-size: 1.1rem; font-weight: 800; color: var(--text-heading); letter-spacing: -0.01em; }
     
-    .nav-links { display: flex; gap: 2rem; }
+    .nav-links { display: flex; gap: 0.75rem; align-items: center; }
     .nav-links a { 
       text-decoration: none; 
       color: var(--text-body); 
       font-weight: 600; 
-      font-size: 0.9rem; 
-      transition: color 0.15s ease;
+      font-size: 0.85rem; 
+      padding: 0.5rem 1rem;
+      border-radius: 99px;
+      transition: all 0.2s ease;
     }
-    .nav-links a:hover { color: var(--color-primary); }
+    .nav-links a:hover { 
+      color: var(--color-primary); 
+      background: rgba(37, 99, 235, 0.05);
+    }
     
     .auth-group { display: flex; gap: 1rem; align-items: center; }
     
@@ -340,11 +345,34 @@ import { ThemeService } from '../../core/services/theme.service';
       border: none; 
       color: var(--text-body); 
       font-weight: 600; 
-      font-size: 0.9rem; 
+      font-size: 0.85rem; 
       cursor: pointer; 
-      padding: 0.5rem 1rem; 
+      padding: 0.6rem 1.25rem; 
+      border-radius: 99px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .btn-ghost:hover { color: var(--color-primary); }
+    .btn-ghost:hover { 
+      color: var(--text-heading); 
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .btn-saas-primary {
+      background: #0F172A;
+      color: #fff;
+      border: none;
+      padding: 0.6rem 1.5rem;
+      border-radius: 99px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    .btn-saas-primary:hover {
+      background: #000;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+    }
 
     /* VISUAL BACKGROUND TEXTURE */
     .dot-grid {
@@ -505,15 +533,48 @@ import { ThemeService } from '../../core/services/theme.service';
     /* PRICING */
     .pricing-section { padding: 8rem 2rem; width: 100%; position: relative; z-index: 10; }
     .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1200px; margin: 0 auto; }
-    .pricing-card { padding: 3rem 2rem; text-align: center; border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; position: relative; }
-    .pricing-card.popular { border-color: var(--color-primary); transform: scale(1.05); z-index: 2; box-shadow: var(--shadow-premium); }
-    .popular-tag { position: absolute; top: -12px; background: var(--color-primary); color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+    .pricing-card { 
+      padding: 3rem 2rem; 
+      text-align: center; 
+      border: 1px solid var(--border-light); 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+      position: relative; 
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      background: var(--bg-surface);
+    }
+    .pricing-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.12);
+      border-color: var(--color-primary);
+    }
+    .pricing-card.popular { 
+      border-color: var(--color-primary); 
+      transform: scale(1.05); 
+      z-index: 2; 
+      box-shadow: var(--shadow-premium); 
+      background: var(--bg-main);
+    }
+    .pricing-card.popular:hover {
+      transform: scale(1.08) translateY(-12px);
+    }
+    .popular-tag { position: absolute; top: -12px; background: var(--color-primary); color: #fff; padding: 6px 16px; border-radius: 99px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3); }
     .p-tier { font-size: 0.9rem; font-weight: 800; text-transform: uppercase; color: var(--text-muted); margin-bottom: 1.5rem; }
-    .p-price { font-size: 3rem; font-weight: 800; color: var(--text-heading); margin-bottom: 2rem; }
-    .p-price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; }
-    .p-features { list-style: none; padding: 0; margin: 0 0 2.5rem 0; width: 100%; }
-    .p-features li { padding: 0.75rem 0; font-size: 0.95rem; border-bottom: 1px solid var(--border-light); color: var(--text-body); }
+    .p-price { font-size: 3rem; font-weight: 800; color: var(--text-heading); margin-bottom: 2rem; letter-spacing: -0.04em; }
+    .p-price span { font-size: 1rem; color: var(--text-muted); font-weight: 400; letter-spacing: 0; }
+    .p-features { list-style: none; padding: 0; margin: 0 0 2.5rem 0; width: 100%; text-align: left; }
+    .p-features li { 
+      padding: 0.75rem 0; 
+      font-size: 0.95rem; 
+      border-bottom: 1px solid var(--border-light); 
+      color: var(--text-body); 
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
     .p-features li:last-child { border-bottom: none; }
+    .check { width: 18px; height: 18px; fill: var(--success); flex-shrink: 0; }
 
     /* FAQ */
     .faq-section { padding: 8rem 2rem; background: var(--bg-surface); width: 100%; position: relative; z-index: 10; }
