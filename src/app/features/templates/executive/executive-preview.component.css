@@ -1,7 +1,6 @@
 :host {
   display: block;
   width: 100%;
-  height: 100%;
   background: white;
 }
 
@@ -23,14 +22,16 @@
 /* Screen styles - simulates A4 flow with tighter margins */
 @media screen {
   .exec-document {
+    width: 100%;
     max-width: 210mm;
     margin: 0 auto;
     background: white;
   }
-  
+
   .exec-content-wrapper {
     padding: 10mm;
-    padding-top: 0; /* Minimized top space */
+    padding-top: 0;
+    /* Minimized top space */
   }
 }
 
@@ -40,13 +41,15 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
-  
+
   @page {
     size: A4;
-    margin: 5mm 7mm !important; /* Minimized top margin */
+    margin: 5mm 7mm !important;
+    /* Minimized top margin */
   }
-  
-  html, body {
+
+  html,
+  body {
     margin: 0 !important;
     padding: 0 !important;
     background: white !important;
@@ -57,7 +60,7 @@
     width: 100%;
     background: white !important;
   }
-  
+
   .exec-document {
     width: 100% !important;
     margin: 0 !important;
@@ -65,7 +68,7 @@
     box-shadow: none !important;
     background: white !important;
   }
-  
+
   .exec-content-wrapper {
     padding: 0 !important;
     padding-top: 0 !important;
@@ -73,17 +76,20 @@
   }
 
   /* Allow sections to break naturally */
-  .section-header-centered, .exec-header {
+  .section-header-centered,
+  .exec-header {
     page-break-after: auto;
     break-after: auto;
   }
-  
+
   .exec-section {
-    margin-bottom: 0.5rem !important; /* Tighten sections for print */
+    margin-bottom: 0.5rem !important;
+    /* Tighten sections for print */
   }
 
   .exec-item {
-    page-break-inside: auto; /* Allow bullets to split across pages to prevent huge gaps */
+    page-break-inside: auto;
+    /* Allow bullets to split across pages to prevent huge gaps */
     break-inside: auto;
   }
 
@@ -99,44 +105,59 @@
   padding: 0;
   margin-bottom: 0.25rem;
 }
-.exec-name { 
-  font-size: 2rem; 
-  font-weight: 800; 
-  letter-spacing: -0.01em; 
-  margin: 0; 
+
+.exec-name {
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin: 0;
   text-transform: uppercase;
   line-height: 1;
   color: #000;
 }
-.exec-title { 
-  font-size: 1.05rem; 
-  font-weight: 700; 
-  color: #000; 
-  margin: 2px 0; 
-  letter-spacing: 0; 
+
+.exec-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #000;
+  margin: 2px 0;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
+
 .exec-contact-grid {
   display: flex;
   flex-direction: column;
   gap: 2px;
   margin-top: 4px;
 }
-.exec-contact-row { 
-  font-size: 0.85rem; 
-  color: #000; 
-  display: flex; 
-  justify-content: center; 
-  gap: 12px; 
+
+.exec-contact-row {
+  font-size: 0.85rem;
+  color: #000;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
   font-weight: 400;
   align-items: center;
 }
-.contact-item strong { font-weight: 700; color: #000; margin-right: 4px; }
+
+.contact-item strong {
+  font-weight: 700;
+  color: #000;
+  margin-right: 4px;
+}
+
 .contact-item a {
   color: #2563eb;
   text-decoration: underline;
 }
-.sep { color: #000; font-weight: 400; margin: 0 4px; }
+
+.sep {
+  color: #000;
+  font-weight: 400;
+  margin: 0 4px;
+}
 
 .section-divider-main {
   width: 100%;
@@ -145,7 +166,7 @@
   margin: 0.75rem 0;
 }
 
-.exec-section { 
+.exec-section {
   margin-bottom: 1rem;
 }
 
@@ -154,84 +175,145 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  margin-bottom: 0.75rem; /* Tighter heading space */
+  margin-bottom: 0.75rem;
+  /* Tighter heading space */
 }
+
 .section-header-centered .line {
   flex: 1;
   height: 2px;
   background: #000;
 }
-.exec-heading { 
-  font-size: 1.25rem; 
-  font-weight: 800; 
-  letter-spacing: 0.05em; 
-  color: #000; 
-  margin: 0; 
+
+.exec-heading {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #000;
+  margin: 0;
   text-align: center;
   text-transform: uppercase;
   line-height: 1;
   white-space: nowrap;
 }
 
-.exec-summary-text { font-size: 10.5pt; line-height: 1.3; color: #000; text-align: justify; margin: 0; font-weight: 400; }
-
-.exec-item { 
-  margin-bottom: 0.75rem; /* Tighter item space */
+.exec-summary-text {
+  font-size: 10.5pt;
+  line-height: 1.3;
+  color: #000;
+  text-align: justify;
+  margin: 0;
+  font-weight: 400;
 }
-.exec-item:last-child { margin-bottom: 0; }
+
+.exec-item {
+  margin-bottom: 0.75rem;
+  /* Tighter item space */
+}
+
+.exec-item:last-child {
+  margin-bottom: 0;
+}
 
 /* EDUCATION Tight Styles */
-.exec-item-title-bold { 
-  font-size: 11pt; 
-  font-weight: 800; 
-  color: #000; 
-  margin-bottom: 0; /* Tightened */
+.exec-item-title-bold {
+  font-size: 11pt;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 0;
+  /* Tightened */
 }
-.exec-item-subtitle-regular { 
-  font-size: 10.5pt; 
-  font-weight: 400; 
-  color: #000; 
-  margin-top: 1px; /* Minimal gap */
+
+.exec-item-subtitle-regular {
+  font-size: 10.5pt;
+  font-weight: 400;
+  color: #000;
+  margin-top: 1px;
+  /* Minimal gap */
   margin-bottom: 6px;
 }
 
 /* EXPERIENCE Tight Styles */
-.exec-job-title-caps { 
-  font-size: 11pt; 
-  font-weight: 800; 
-  color: #1a1a1a; 
-  margin-bottom: 0px; 
-  text-transform: uppercase; 
+.exec-job-title-caps {
+  font-size: 11pt;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 0px;
+  text-transform: uppercase;
 }
-.exec-item-subheader-bold-italic { 
-  font-size: 10.5pt; 
-  font-weight: 700; 
-  font-style: italic; 
-  color: #000; 
-  margin-top: 2px; /* Minimal gap */
+
+.exec-item-subheader-bold-italic {
+  font-size: 10.5pt;
+  font-weight: 700;
+  font-style: italic;
+  color: #000;
+  margin-top: 2px;
+  /* Minimal gap */
   margin-bottom: 8px;
 }
 
-.exec-bullets { 
-  margin: 0.4rem 0 0 0; 
-  padding-left: 1.5rem; 
-  list-style-type: disc; 
+.exec-bullets {
+  margin: 0.4rem 0 0 0;
+  padding-left: 1.5rem;
+  list-style-type: disc;
 }
-.exec-bullets li { 
-  font-size: 10.5pt; 
-  line-height: 1.3; 
-  color: #000; 
-  margin-bottom: 2px; 
+
+.exec-bullets li {
+  font-size: 10.5pt;
+  line-height: 1.3;
+  color: #000;
+  margin-bottom: 2px;
 }
-.exec-bullets li::marker { color: #000; font-size: 0.7rem; }
+
+.exec-bullets li::marker {
+  color: #000;
+  font-size: 0.7rem;
+}
 
 /* SKILLS & LANGUAGES GRID */
-.exec-grid-2col { display: flex; gap: 60px; flex-wrap: wrap; }
-.grid-column { flex: 1; min-width: 150px; }
-.grid-label { font-size: 0.95rem; font-weight: 900; color: #000; margin-bottom: 12px; margin-top: 0; }
-.grid-list { list-style: none; padding: 0; margin: 0; }
-.grid-list li { font-size: 10pt; line-height: 1.5; color: #000; margin-bottom: 8px; }
+.exec-grid-2col {
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+}
+
+.grid-column {
+  flex: 1;
+  min-width: 150px;
+}
+
+.grid-label {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #000;
+  margin-bottom: 12px;
+  margin-top: 0;
+}
+
+.grid-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.grid-list li {
+  font-size: 10pt;
+  line-height: 1.5;
+  color: #000;
+  margin-bottom: 8px;
+}
 
 /* PROJECTS */
-.project-line { font-size: 10.5pt; line-height: 1.5; color: #000; }
-.blue-link { color: #2563eb; text-decoration: underline; margin-left: 6px; cursor: pointer; font-size: 0.95rem; }
+.project-line {
+  font-size: 10.5pt;
+  line-height: 1.5;
+  color: #000;
+}
+
+.blue-link {
+  color: #2563eb;
+  text-decoration: underline;
+  margin-left: 6px;
+  cursor: pointer;
+  font-size: 0.95rem;
+}

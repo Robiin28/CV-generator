@@ -11,7 +11,10 @@
   
   --bg-main: #FFFFFF;
   --bg-sidebar: #0A2540;
-  --bg-surface: #F8FAFC;        /* Light Gray Cards */
+  --bg-surface: #F8FAFC;        /* Light Gray Surface */
+  --bg-card: #FFFFFF;
+  --bg-hover: #F1F5F9;
+  --bg-canvas: #E2E8F1;         /* Gray editor background */
   
   --text-heading: #0F172A;      /* Dark Charcoal */
   --text-body: #475569;         /* Medium Gray */
@@ -19,7 +22,11 @@
   --text-on-navy: #FFFFFF;
   
   --border-light: #E2E8F0;
+  --border-subtle: #F1F5F9;
   --border-active: #0A2540;
+  
+  --input-bg: #FFFFFF;
+  --placeholder-color: #000000;
   
   --success: #10B981;           /* Soft Emerald */
   
@@ -56,14 +63,21 @@
 .dark {
   --bg-main: #050811;           /* Deep Black-Navy */
   --bg-sidebar: #020617;        /* Almost Black */
-  --bg-surface: #0f172a;        /* Slate-900 Card Surface */
+  --bg-surface: #0b0f1a;        /* Slate-950 Darker Background */
+  --bg-card: #111827;           /* Slate-900 Card Surface */
+  --bg-hover: rgba(255, 255, 255, 0.05);
+  --bg-canvas: #020617;         /* Deepest black for preview canvas */
   
   --text-heading: #F8FAFC;      /* Off-White */
   --text-body: #94A3B8;         /* Slate-400 */
   --text-muted: #64748B;
   
   --border-light: #1e293b;      /* Slate-800 */
+  --border-subtle: #0f172a;
   --border-active: #3b82f6;     /* Bright Blue */
+  
+  --input-bg: #0f172a;
+  --placeholder-color: #ffffff;
   
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
@@ -113,8 +127,8 @@ h1, h2, h3, h4, .font-display {
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Premium Utility Classes */
 .glass-static {
@@ -207,12 +221,16 @@ h1, h2, h3, h4, .font-display {
 .input-saas {
   width: 100%;
   padding: 0.75rem 1rem;
-  background-color: var(--bg-main);
+  background-color: var(--input-bg);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-md);
   font-size: 0.875rem;
   color: var(--text-heading);
   transition: var(--transition-base);
+}
+.input-saas::placeholder {
+  color: var(--placeholder-color);
+  opacity: 0.5;
 }
 .input-saas:focus {
   outline: none;

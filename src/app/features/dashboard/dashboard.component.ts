@@ -76,7 +76,7 @@ import { ResumeStore } from '../builder/store/resume.store';
     .resume-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 2rem; }
     
     .resume-item-card {
-      background: #FFFFFF;
+      background: var(--bg-card);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-lg);
       overflow: hidden;
@@ -97,7 +97,7 @@ import { ResumeStore } from '../builder/store/resume.store';
       padding: 2rem;
     }
     .skeleton-doc { width: 100%; height: 100%; display: flex; flex-direction: column; gap: 12px; }
-    .skel-row { background: var(--border-light); height: 8px; border-radius: 4px; }
+    .skel-row { background: var(--border-light); height: 8px; border-radius: 4px; opacity: 0.5; }
     .skel-row.full { width: 90%; }
     .skel-row.mid { width: 60%; }
     .skel-row.short { width: 40%; }
@@ -111,22 +111,29 @@ import { ResumeStore } from '../builder/store/resume.store';
       width: 36px; height: 36px;
       border-radius: var(--radius-md);
       border: 1px solid var(--border-light);
-      background: #FFFFFF;
+      background: var(--bg-card);
       color: var(--text-body);
       display: flex; align-items: center; justify-content: center;
       cursor: pointer;
       transition: var(--transition-base);
     }
     .action-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-soft); }
-    .action-btn.delete:hover { border-color: #EF4444; color: #EF4444; background: #FEF2F2; }
+    .action-btn.delete:hover { border-color: #EF4444; color: #EF4444; background: rgba(239, 68, 68, 0.1); }
 
-    .empty-workspace { grid-column: 1 / -1; text-align: center; padding: 6rem 2rem; background: #FFFFFF; border: 1px dashed var(--border-light); border-radius: var(--radius-lg); }
+    .empty-workspace { grid-column: 1 / -1; text-align: center; padding: 6rem 2rem; background: var(--bg-card); border: 1px dashed var(--border-light); border-radius: var(--radius-lg); }
     .empty-icon-box { font-size: 3rem; margin-bottom: 1.5rem; opacity: 0.4; }
     .empty-workspace h3 { font-size: 1.5rem; color: var(--text-heading); margin-bottom: 0.75rem; }
     .empty-workspace p { color: var(--text-muted); margin-bottom: 2rem; max-width: 400px; margin-left: auto; margin-right: auto; }
 
     .fade-in { animation: fadeIn 0.5s ease-out forwards; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    @media (max-width: 768px) {
+      .dashboard-shell { padding: 1.5rem; }
+      .dash-header { flex-direction: column; align-items: flex-start; gap: 1.5rem; margin-bottom: 2rem; }
+      .dash-header button { width: 100%; justify-content: center; }
+      .resume-grid { grid-template-columns: 1fr; }
+    }
   `]
 })
 export class DashboardComponent implements OnInit {

@@ -100,6 +100,10 @@ import { RouterModule } from '@angular/router';
     .pro-icon { color: #FCD34D; font-size: 1.2rem; }
     .pro-text strong { display: block; font-size: 0.8rem; margin-bottom: 2px; }
     .pro-text p { font-size: 0.65rem; opacity: 0.6; margin: 0; }
+    @media (max-width: 1024px) {
+      :host { display: none; }
+      .sidebar { display: none; }
+    }
   `]
 })
 export class SidebarComponent {

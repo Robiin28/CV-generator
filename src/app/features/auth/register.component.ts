@@ -82,6 +82,11 @@ import { CommonModule } from '@angular/common';
     
     .auth-footer { margin-top: 2rem; text-align: center; font-size: 0.9rem; color: var(--text-secondary); }
     .auth-footer a { color: var(--primary-teal); font-weight: 600; text-decoration: none; }
+    @media (max-width: 480px) {
+      .auth-container { padding: 1rem; }
+      .auth-card { padding: 2rem 1.5rem; border-radius: 16px; }
+      .auth-header h1 { font-size: 1.75rem; }
+    }
   `]
 })
 export class RegisterComponent {
