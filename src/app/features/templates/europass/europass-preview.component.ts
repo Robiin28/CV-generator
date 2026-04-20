@@ -26,9 +26,21 @@ import { ResumeStore } from '../../builder/store/resume.store';
                 <svg class="contact-icon" viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg> 
                 {{ store.resume().personalInfo.phone }}
               </div>
+              <div class="cv-contact-item" *ngIf="store.resume().personalInfo.location">
+                <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 0 1 0-5 2.5 2.5 0 0 1 0 5z"/></svg> 
+                {{ store.resume().personalInfo.location }}
+              </div>
               <div class="cv-contact-item" *ngIf="store.resume().personalInfo.linkedin">
                 <svg class="contact-icon" viewBox="0 0 24 24"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a2.7 2.7 0 0 0-2.7-2.7c-1.2 0-2.3.7-2.6 1.1V10.2H10v8.3h3.2v-4.4c0-.2 0-.5.1-.7.2-.5.5-.9 1-.9.7 0 1 .5 1 1.3v4.7h3.2M6.7 8.7a1.6 1.6 0 1 0 0-3.2 1.6 1.6 0 0 0 0 3.2m1.6 10.3V10.2H5.1v8.8h3.2z"/></svg> 
                 <a [href]="store.resume().personalInfo.linkedin" target="_blank">{{ (store.resume().personalInfo.linkedin || '').replace('https://', '').replace('www.', '') }}</a>
+              </div>
+              <div class="cv-contact-item" *ngIf="store.resume().personalInfo.github">
+                <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.63-.33 2.47-.33.83 0 1.67.11 2.47.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg> 
+                <a [href]="store.resume().personalInfo.github" target="_blank">{{ (store.resume().personalInfo.github || '').replace('https://', '').replace('www.', '') }}</a>
+              </div>
+              <div class="cv-contact-item" *ngIf="store.resume().personalInfo.website">
+                <svg class="contact-icon" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg> 
+                <a [href]="store.resume().personalInfo.website" target="_blank">{{ (store.resume().personalInfo.website || '').replace('https://', '').replace('www.', '') }}</a>
               </div>
             </div>
             <!-- PROFILE PHOTO -->

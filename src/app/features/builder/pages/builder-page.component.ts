@@ -79,6 +79,10 @@ import { AiChatComponent } from '../../ai-chat/ai-chat.component';
                  <div class="field"><label>Job Title</label><input type="text" class="input-saas" placeholder="e.g. Senior Software Engineer" [value]="store.resume().personalInfo.jobTitle || ''" (input)="store.updatePersonalInfo({ jobTitle: $any($event.target).value })"></div>
                  <div class="field"><label>Email</label><input type="email" class="input-saas" placeholder="e.g. john.doe@example.com" [value]="store.resume().personalInfo.email" (input)="store.updatePersonalInfo({ email: $any($event.target).value })"></div>
                  <div class="field"><label>Phone</label><input type="text" class="input-saas" placeholder="e.g. +1 (555) 000-0000" [value]="store.resume().personalInfo.phone" (input)="store.updatePersonalInfo({ phone: $any($event.target).value })"></div>
+                 <div class="field"><label>Location</label><input type="text" class="input-saas" placeholder="e.g. London, UK" [value]="store.resume().personalInfo.location || ''" (input)="store.updatePersonalInfo({ location: $any($event.target).value })"></div>
+                 <div class="field"><label>LinkedIn</label><input type="text" class="input-saas" placeholder="e.g. linkedin.com/in/johndoe" [value]="store.resume().personalInfo.linkedin || ''" (input)="store.updatePersonalInfo({ linkedin: $any($event.target).value })"></div>
+                 <div class="field"><label>GitHub</label><input type="text" class="input-saas" placeholder="e.g. github.com/johndoe" [value]="store.resume().personalInfo.github || ''" (input)="store.updatePersonalInfo({ github: $any($event.target).value })"></div>
+                 <div class="field"><label>Website</label><input type="text" class="input-saas" placeholder="e.g. johndoe.com" [value]="store.resume().personalInfo.website || ''" (input)="store.updatePersonalInfo({ website: $any($event.target).value })"></div>
                </div>
              }
              @if (store.currentStep() === 1) {

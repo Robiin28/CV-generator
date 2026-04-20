@@ -14,27 +14,33 @@ import { ResumeStore } from '../../builder/store/resume.store';
           <h1 class="exec-name">{{ store.resume().personalInfo.fullName || 'YOUR NAME' }}</h1>
           <p class="exec-title" *ngIf="store.resume().personalInfo.jobTitle">{{ store.resume().personalInfo.jobTitle | uppercase }}</p>
           
-          <div class="exec-contact-grid">
-            <div class="exec-contact-row" *ngIf="store.resume().personalInfo.phone || store.resume().personalInfo.email">
+            <div class="exec-contact-row" *ngIf="store.resume().personalInfo.phone || store.resume().personalInfo.email || store.resume().personalInfo.location">
               <span *ngIf="store.resume().personalInfo.phone" class="contact-item">
                 <strong>Phone:</strong> {{ store.resume().personalInfo.phone }}
               </span>
-              <span class="sep" *ngIf="store.resume().personalInfo.phone && store.resume().personalInfo.email">|</span>
+              <span class="sep" *ngIf="store.resume().personalInfo.phone && (store.resume().personalInfo.email || store.resume().personalInfo.location)">|</span>
               <span *ngIf="store.resume().personalInfo.email" class="contact-item">
                 <strong>Email:</strong> {{ store.resume().personalInfo.email }}
               </span>
+              <span class="sep" *ngIf="store.resume().personalInfo.email && store.resume().personalInfo.location">|</span>
+              <span *ngIf="store.resume().personalInfo.location" class="contact-item">
+                <strong>Location:</strong> {{ store.resume().personalInfo.location }}
+              </span>
             </div>
             
-            <div class="exec-contact-row" *ngIf="store.resume().personalInfo.linkedin || store.resume().personalInfo.website">
+            <div class="exec-contact-row" *ngIf="store.resume().personalInfo.linkedin || store.resume().personalInfo.website || store.resume().personalInfo.github">
               <span *ngIf="store.resume().personalInfo.linkedin" class="contact-item">
                 <strong>LinkedIn:</strong> <a [href]="store.resume().personalInfo.linkedin" target="_blank">{{ (store.resume().personalInfo.linkedin || '').replace('https://', '').replace('www.', '') }}</a>
               </span>
-              <span class="sep" *ngIf="store.resume().personalInfo.linkedin && store.resume().personalInfo.website">|</span>
+              <span class="sep" *ngIf="store.resume().personalInfo.linkedin && (store.resume().personalInfo.website || store.resume().personalInfo.github)">|</span>
               <span *ngIf="store.resume().personalInfo.website" class="contact-item">
                 <strong>Portfolio:</strong> <a [href]="store.resume().personalInfo.website" target="_blank">{{ (store.resume().personalInfo.website || '').replace('https://', '').replace('www.', '') }}</a>
               </span>
+              <span class="sep" *ngIf="store.resume().personalInfo.website && store.resume().personalInfo.github">|</span>
+              <span *ngIf="store.resume().personalInfo.github" class="contact-item">
+                <strong>GitHub:</strong> <a [href]="store.resume().personalInfo.github" target="_blank">{{ (store.resume().personalInfo.github || '').replace('https://', '').replace('www.', '') }}</a>
+              </span>
             </div>
-          </div>
         </header>
 
         <div class="section-divider-main"></div>
