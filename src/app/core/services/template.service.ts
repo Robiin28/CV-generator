@@ -26,6 +26,13 @@ export class TemplateService {
       category: 'Professional',
       thumbnailUrl: 'assets/templates/europass.png',
       description: 'A striking, minimalist, single-column design perfect for modern executive applications.'
+    },
+    {
+      id: 'intern-01',
+      name: 'Internship Starter',
+      category: 'Creative',
+      thumbnailUrl: 'assets/templates/europass.png',
+      description: 'Modern dual-column layout tailored for students and entry-level professionals, highlighting education and projects.'
     }
   ]);
 

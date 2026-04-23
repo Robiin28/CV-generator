@@ -138,6 +138,24 @@ import { ResumeStore } from '../../builder/store/resume.store';
             </div>
           </div>
         </ng-container>
+
+          <!-- VOLUNTEERING -->
+        <ng-container *ngIf="filteredVolunteering.length > 0">
+          <div class="cv-section-label">
+            <svg class="section-icon" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+            VOLUNTEERING
+          </div>
+          <div class="cv-section-content">
+            <ng-container *ngFor="let vol of filteredVolunteering">
+              <span class="cv-date">{{ vol.startDate }} - {{ vol.current ? 'Present' : vol.endDate }}</span>
+              <div class="cv-entry-info">
+                <h3 class="cv-entry-title">{{ vol.role }}</h3>
+                <div class="cv-entry-subtitle">{{ vol.organization }}</div>
+                <div class="cv-entry-description" *ngIf="vol.description">{{ vol.description }}</div>
+              </div>
+            </ng-container>
+          </div>
+        </ng-container>
         </div><!-- END GRID-LAYOUT -->
       </div>
     </div>
@@ -171,5 +189,9 @@ export class EuropassPreviewComponent {
 
   get filteredCertifications() {
     return this.store.resume().certifications || [];
+  }
+
+  get filteredVolunteering() {
+    return this.store.resume().volunteering || [];
   }
 }

@@ -9,6 +9,7 @@ export interface Resume {
   projects?: Project[];
   languages?: Language[];
   certifications?: Certification[];
+  volunteering?: Volunteering[];
   atsScore?: number;
   lastUpdated: Date;
   // Europass Extended Fields
@@ -99,4 +100,15 @@ export interface CEFRLanguage {
 export interface Skill {
   name: string;
   level: number;
+}
+
+export interface Volunteering {
+  id: string;
+  role: string;
+  organization: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  current: boolean;
+  description: string;
 }
