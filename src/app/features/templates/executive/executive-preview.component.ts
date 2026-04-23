@@ -132,6 +132,23 @@ import { ResumeStore } from '../../builder/store/resume.store';
           </div>
         </section>
 
+        <!-- VOLUNTEERING -->
+        <section class="exec-section" *ngIf="filteredVolunteering.length > 0">
+          <div class="section-header-centered">
+            <div class="line"></div>
+            <h2 class="exec-heading">VOLUNTEERING & ACTIVITIES</h2>
+            <div class="line"></div>
+          </div>
+          
+          <div class="exec-item" *ngFor="let vol of filteredVolunteering">
+            <h3 class="exec-item-title-bold">{{ vol.role }}</h3>
+            <div class="exec-item-subtitle-regular">
+              <strong>{{ vol.organization }}</strong> | {{ vol.startDate }} – {{ vol.current ? 'Present' : vol.endDate }}
+            </div>
+            <p class="exec-summary-text" style="margin-top: 10px;" *ngIf="vol.description">{{ vol.description }}</p>
+          </div>
+        </section>
+
         <!-- CERTIFICATIONS -->
         <section class="exec-section" *ngIf="filteredCertifications.length > 0">
           <div class="section-header-centered">
@@ -179,5 +196,9 @@ export class ExecutivePreviewComponent {
 
   get filteredCertifications() {
     return this.store.resume().certifications || [];
+  }
+
+  get filteredVolunteering() {
+    return this.store.resume().volunteering || [];
   }
 }

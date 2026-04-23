@@ -5,11 +5,12 @@ import { ResumeStore } from '../store/resume.store';
 import { AiService } from '../../../core/services/ai.service';
 import { EuropassPreviewComponent } from '../../templates/europass/europass-preview.component';
 import { ExecutivePreviewComponent } from '../../templates/executive/executive-preview.component';
+import { InternshipPreviewComponent } from '../../templates/internship/internship-preview.component';
 import { AiChatComponent } from '../../ai-chat/ai-chat.component';
 @Component({
   selector: 'app-builder-page',
   standalone: true,
-  imports: [CommonModule, EuropassPreviewComponent, ExecutivePreviewComponent, AiChatComponent],
+  imports: [CommonModule, EuropassPreviewComponent, ExecutivePreviewComponent, InternshipPreviewComponent, AiChatComponent],
   template: `
     <div class="builder-layout" [class.is-exporting]="isExporting" [class.preview-mode]="viewMode() === 'preview'" [class.ai-minimized]="aiMinimized()">
       <!-- STICKY TOP HEADER (MOBILE) -->
@@ -181,6 +182,30 @@ import { AiChatComponent } from '../../ai-chat/ai-chat.component';
                  }
                </div>
              }
+             @if (store.currentStep() === 8) {
+               <div class="list-area">
+                 <button class="btn-saas btn-saas-outline w-full mb-4" (click)="addVolunteering()">+ Add Volunteering / Activity</button>
+                 @for (vol of store.resume().volunteering; track vol.id) {
+                   <div class="item-card">
+                     <button class="del-btn" (click)="store.removeVolunteering(vol.id)">✕</button>
+                     <div class="input-grid">
+                       <div class="field"><label>Role / Position</label><input class="input-saas" [value]="vol.role" (input)="store.updateVolunteering(vol.id, { role: $any($event.target).value })" placeholder="e.g. Volunteer Staff"></div>
+                       <div class="field"><label>Organization</label><input class="input-saas" [value]="vol.organization" (input)="store.updateVolunteering(vol.id, { organization: $any($event.target).value })" placeholder="e.g. Red Cross Society"></div>
+                       <div class="field"><label>Location</label><input class="input-saas" [value]="vol.location" (input)="store.updateVolunteering(vol.id, { location: $any($event.target).value })" placeholder="e.g. City, Country"></div>
+                       <div class="field"><label>Start Date</label><input class="input-saas" [value]="vol.startDate" (input)="store.updateVolunteering(vol.id, { startDate: $any($event.target).value })" placeholder="e.g. 2015"></div>
+                       <div class="field"><label>End Date</label><input class="input-saas" [value]="vol.endDate" (input)="store.updateVolunteering(vol.id, { endDate: $any($event.target).value })" [disabled]="vol.current" placeholder="e.g. 2016"></div>
+                       <div class="field" style="display:flex; align-items:center; gap:8px; padding-top:24px">
+                         <input type="checkbox" [id]="'vol-curr-' + vol.id" [checked]="vol.current" (change)="store.updateVolunteering(vol.id, { current: $any($event.target).checked })">
+                         <label [for]="'vol-curr-' + vol.id" style="margin:0">I currently do this</label>
+                       </div>
+                       <div class="field full"><label>Description</label>
+                         <textarea class="input-saas" rows="3" [value]="vol.description" (input)="store.updateVolunteering(vol.id, { description: $any($event.target).value })" placeholder="Describe your achievements and impact..."></textarea>
+                       </div>
+                     </div>
+                   </div>
+                 }
+               </div>
+             }
           </div>
         </div>
       </main>
@@ -201,6 +226,8 @@ import { AiChatComponent } from '../../ai-chat/ai-chat.component';
           <div class="a4-document-editor continuous-scroll">
              @if (store.selectedTemplateId() === 'exec-01') {
                 <app-executive-preview [isExporting]="isExporting"></app-executive-preview>
+             } @else if (store.selectedTemplateId() === 'intern-01') {
+                <app-internship-preview [isExporting]="isExporting"></app-internship-preview>
              } @else {
                 <app-europass-preview [isExporting]="isExporting"></app-europass-preview>
              }
@@ -394,6 +421,7 @@ export class BuilderPageComponent implements OnInit {
     { index: 5, label: 'Projects', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>' },
     { index: 6, label: 'Languages', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>' },
     { index: 7, label: 'Certs', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg>' },
+    { index: 8, label: 'Volunteer', icon: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' },
   ];
 
   ngOnInit() {
@@ -437,6 +465,7 @@ export class BuilderPageComponent implements OnInit {
   addProject() { this.store.addProject({ id: crypto.randomUUID(), name: '', description: '', technologies: '', bullets: [] }); }
   addLanguage() { this.store.addLanguage({ id: crypto.randomUUID(), name: '', level: '' }); }
   addCertification() { this.store.addCertification({ id: crypto.randomUUID(), name: '', issuer: '', date: '' }); }
+  addVolunteering() { this.store.addVolunteering({ id: crypto.randomUUID(), role: '', organization: '', location: '', startDate: '', endDate: '', current: false, description: '' }); }
 
   onSkillsInput(index: number, event: any) {
     const skills = event.target.value.split(',').map((s: string) => s.trim()).filter((s: string) => s);

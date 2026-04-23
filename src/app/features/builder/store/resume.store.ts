@@ -1,5 +1,5 @@
 import { signalStore, withState, withMethods, patchState, withHooks } from '@ngrx/signals';
-import { Resume, PersonalInfo, Experience, SkillCategory, Project, Certification, Language } from '../../../core/models/resume.model';
+import { Resume, PersonalInfo, Experience, SkillCategory, Project, Certification, Language, Volunteering } from '../../../core/models/resume.model';
 import { inject } from '@angular/core';
 import { StorageService } from '../../../core/services/storage.service';
 
@@ -151,6 +151,18 @@ const initialResume: Resume = {
   languages: [
     { id: 'lang-1', name: 'Amharic', level: 'Native' },
     { id: 'lang-2', name: 'English', level: 'IELTS Overall Score: 8' }
+  ],
+  volunteering: [
+    {
+      id: 'vol-1',
+      role: 'Volunteer Staff',
+      organization: 'Red Cross Society',
+      location: 'Addis Ababa',
+      startDate: '2015',
+      endDate: '2016',
+      current: false,
+      description: 'Assisted in community outreach and first aid training programs for local schools.'
+    }
   ],
   lastUpdated: new Date()
 };
@@ -319,6 +331,29 @@ export const ResumeStore = signalStore(
     removeCertification(id: string) {
       patchState(store, (state) => {
         const newState = { ...state.resume, certifications: (state.resume.certifications || []).filter((c) => c.id !== id), lastUpdated: new Date() };
+        storageService.saveCurrentResume(newState);
+        return { resume: newState };
+      });
+    },
+
+    // --- Volunteering & Activities ---
+    addVolunteering(vol: Volunteering) {
+      patchState(store, (state) => {
+        const newState = { ...state.resume, volunteering: [...(state.resume.volunteering || []), vol], lastUpdated: new Date() };
+        storageService.saveCurrentResume(newState);
+        return { resume: newState };
+      });
+    },
+    updateVolunteering(id: string, vol: Partial<Volunteering>) {
+      patchState(store, (state) => {
+        const newState = { ...state.resume, volunteering: (state.resume.volunteering || []).map((v) => v.id === id ? { ...v, ...vol } : v), lastUpdated: new Date() };
+        storageService.saveCurrentResume(newState);
+        return { resume: newState };
+      });
+    },
+    removeVolunteering(id: string) {
+      patchState(store, (state) => {
+        const newState = { ...state.resume, volunteering: (state.resume.volunteering || []).filter((v) => v.id !== id), lastUpdated: new Date() };
         storageService.saveCurrentResume(newState);
         return { resume: newState };
       });
