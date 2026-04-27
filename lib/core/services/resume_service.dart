@@ -142,35 +142,18 @@ class ResumeService extends ChangeNotifier {
           id: 'proj-1',
           name: 'Personal Finance Dashboard',
           description: 'A cross-platform app built to track expenses and set savings goals.',
-          technologies: 'Flutter, Firebase, Provider',
+          technologies: 'Flutter, Firebase',
           bullets: [],
         ),
       ],
-      languages: [
-        Language(id: 'lang-1', name: 'Amharic', level: 'Native'),
-        Language(id: 'lang-2', name: 'English', level: 'IELTS Overall Score: 8'),
-      ],
-      certifications: [
-        Certification(id: 'cert-1', name: 'Professional Scrum Master I', issuer: 'Scrum.org', date: '2022'),
-      ],
-      volunteering: [
-        Volunteering(
-          id: 'vol-1',
-          role: 'Volunteer Staff',
-          organization: 'Red Cross Society',
-          location: 'Addis Ababa',
-          startDate: '2015',
-          endDate: '2016',
-          current: false,
-          description: 'Assisted in community outreach and first aid training programs.',
-        ),
-      ],
+      languages: [],
+      certifications: [],
+      volunteering: [],
       customSections: [
         CustomSection(
           id: 'sec-interests',
           title: 'Interests',
           items: [
-            CustomField(label: 'Sports', value: 'Basketball, Swimming'),
             CustomField(label: 'Reading', value: 'Psychology, History'),
           ],
         ),

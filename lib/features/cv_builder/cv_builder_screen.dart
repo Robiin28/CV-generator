@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-
+import 'package:provider/provider.dart';
+import '../../core/services/resume_service.dart';
+import '../../core/services/pdf_service.dart';
 import 'widgets/cv_form_sidebar.dart';
 import 'widgets/cv_preview_document.dart';
 
@@ -72,7 +74,12 @@ class _CvBuilderScreenState extends State<CvBuilderScreen> {
                   ],
                 ),
                 ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () async {
+                    final resume = context.read<ResumeService>().currentResume;
+                    if (resume != null) {
+                      await PdfService.generateAndDownload(resume);
+                    }
+                  },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF0A2540),
                     foregroundColor: Colors.white,
@@ -93,15 +100,18 @@ class _CvBuilderScreenState extends State<CvBuilderScreen> {
                 previewToolbar,
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(vertical: 40),
-                    child: Center(
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 40),
-                          child: const CvPreviewDocument(),
-                        ),
-                      ),
+                    padding: const EdgeInsets.symmetric(vertical: 24),
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: isNarrow 
+                        ? SizedBox(
+                            width: constraints.maxWidth,
+                            child: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: const CvPreviewDocument(),
+                            ),
+                          )
+                        : const CvPreviewDocument(),
                     ),
                   ),
                 ),
