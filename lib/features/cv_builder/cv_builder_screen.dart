@@ -37,6 +37,27 @@ class _CvBuilderScreenState extends State<CvBuilderScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                final resume = context.read<ResumeService>().currentResume;
+                if (resume != null) {
+                  await PdfService.generateAndDownload(resume);
+                }
+              },
+              icon: const Icon(Icons.picture_as_pdf, size: 18),
+              label: const Text('Download PDF', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0A2540),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                elevation: 0,
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
           IconButton(icon: const Icon(Icons.dark_mode_outlined, color: Color(0xFF64748B), size: 22), onPressed: () {}),
           const SizedBox(width: 8),
           const Icon(Icons.circle, color: Colors.black, size: 24), // User circle icon

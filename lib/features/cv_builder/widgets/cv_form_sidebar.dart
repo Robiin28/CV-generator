@@ -71,7 +71,7 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                       children: [
                         Icon(
                           _steps[index]['icon'],
-                          color: isSelected ? const Color(0xFF0A2540) : const Color(0xFF64748B),
+                          color: isSelected ? const Color(0xFF0A2540) : const Color(0xFF475569),
                           size: 22,
                         ),
                         const SizedBox(height: 6),

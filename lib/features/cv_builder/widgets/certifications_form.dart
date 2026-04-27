@@ -102,9 +102,12 @@ class CertificationsForm extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _buildInputField('Certification Name', cert.name, (val) {
-                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
-                            currentCerts[index] = cert.copyWith(name: val);
-                            resumeService.updateCertifications(currentCerts);
+                            final currentResume = context.read<ResumeService>().currentResume;
+                            if (currentResume != null) {
+                              final newList = List<Certification>.from(currentResume.certifications ?? []);
+                              newList[index] = newList[index].copyWith(name: val);
+                              context.read<ResumeService>().updateCertifications(newList);
+                            }
                           }),
                         ),
                         const SizedBox(width: 16),
@@ -123,17 +126,23 @@ class CertificationsForm extends StatelessWidget {
                       children: [
                         Expanded(
                           child: _buildInputField('Issuer', cert.issuer, (val) {
-                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
-                            currentCerts[index] = cert.copyWith(issuer: val);
-                            resumeService.updateCertifications(currentCerts);
+                            final currentResume = context.read<ResumeService>().currentResume;
+                            if (currentResume != null) {
+                              final newList = List<Certification>.from(currentResume.certifications ?? []);
+                              newList[index] = newList[index].copyWith(issuer: val);
+                              context.read<ResumeService>().updateCertifications(newList);
+                            }
                           }),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: _buildInputField('Date', cert.date, (val) {
-                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
-                            currentCerts[index] = cert.copyWith(date: val);
-                            resumeService.updateCertifications(currentCerts);
+                            final currentResume = context.read<ResumeService>().currentResume;
+                            if (currentResume != null) {
+                              final newList = List<Certification>.from(currentResume.certifications ?? []);
+                              newList[index] = newList[index].copyWith(date: val);
+                              context.read<ResumeService>().updateCertifications(newList);
+                            }
                           }),
                         ),
                       ],

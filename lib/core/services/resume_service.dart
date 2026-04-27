@@ -246,6 +246,14 @@ class ResumeService extends ChangeNotifier {
           description: 'Assisted in community outreach and first aid training programs for local schools.',
         ),
       ],
+      certifications: [
+        Certification(
+          id: 'cert-1',
+          name: 'CHEVENING SCHOLARSHIP',
+          issuer: 'UK Government',
+          date: '2024',
+        ),
+      ],
       customSections: [],
       lastUpdated: DateTime.now(),
     );
