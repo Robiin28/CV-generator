@@ -7,17 +7,18 @@ import '../../../core/services/resume_service.dart';
 class SkillsForm extends StatelessWidget {
   const SkillsForm({super.key});
 
-  Widget _buildInputField(String label, String initialValue, Function(String) onChanged) {
+  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label.isNotEmpty) ...[
           Text(
             label.toUpperCase(),
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.bold,
-              color: Color(0xFF64748B),
+              color: isDark ? Colors.white54 : const Color(0xFF64748B),
               letterSpacing: 1.0,
             ),
           ),
@@ -25,18 +26,21 @@ class SkillsForm extends StatelessWidget {
         ],
         TextFormField(
           initialValue: initialValue,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
           decoration: InputDecoration(
+            fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF0A2540), width: 2),
+              borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
@@ -48,14 +52,13 @@ class SkillsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final skillCategoriesCount = context.select<ResumeService, int>((s) => s.currentResume?.skills.length ?? 0);
-    final resumeService = context.read<ResumeService>();
-    final skills = resumeService.currentResume?.skills ?? [];
+    final skills = context.watch<ResumeService>().currentResume?.skills ?? [];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
+        color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(32.0),
@@ -69,11 +72,11 @@ class SkillsForm extends StatelessWidget {
               label: const Text('Add Category'),
               onPressed: () {
                 final newCategory = SkillCategory(category: '', skills: []);
-                resumeService.updateSkills([...skills, newCategory]);
+                context.read<ResumeService>().updateSkills([...skills, newCategory]);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF0A2540),
-                side: BorderSide(color: Colors.grey.shade300),
+                foregroundColor: isDark ? Colors.white : const Color(0xFF0A2540),
+                side: BorderSide(color: isDark ? Colors.white24 : Colors.grey.shade300),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),
@@ -88,8 +91,8 @@ class SkillsForm extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                  border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -98,29 +101,30 @@ class SkillsForm extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField('Category Name', category.category, (val) {
-                            final currentSkills = List<SkillCategory>.from(resumeService.currentResume?.skills ?? []);
-                            currentSkills[catIndex] = category.copyWith(category: val);
-                            resumeService.updateSkills(currentSkills);
+                          child: _buildInputField(context, 'Category Name', category.category, (val) {
+                            final current = context.read<ResumeService>().currentResume?.skills ?? [];
+                            final newList = List<SkillCategory>.from(current);
+                            newList[catIndex] = newList[catIndex].copyWith(category: val);
+                            context.read<ResumeService>().updateSkills(newList);
                           }),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                           onPressed: () {
-                            final currentSkills = List<SkillCategory>.from(resumeService.currentResume?.skills ?? []);
-                            currentSkills.removeAt(catIndex);
-                            resumeService.updateSkills(currentSkills);
+                            final current = context.read<ResumeService>().currentResume?.skills ?? [];
+                            final newList = List<SkillCategory>.from(current)..removeAt(catIndex);
+                            context.read<ResumeService>().updateSkills(newList);
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    const Text(
+                    Text(
                       'SKILLS',
                       style: TextStyle(
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
-                        color: Color(0xFF64748B),
+                        color: isDark ? Colors.white54 : const Color(0xFF64748B),
                         letterSpacing: 1.0,
                       ),
                     ),
@@ -134,24 +138,25 @@ class SkillsForm extends StatelessWidget {
                           final skillName = skillEntry.value;
 
                           return Chip(
-                            label: Text(skillName),
-                            deleteIcon: const Icon(Icons.close, size: 14),
+                            label: Text(skillName, style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
+                            deleteIcon: Icon(Icons.close, size: 14, color: isDark ? Colors.white54 : Colors.black54),
                             onDeleted: () {
-                              final currentSkills = List<SkillCategory>.from(resumeService.currentResume?.skills ?? []);
+                              final current = context.read<ResumeService>().currentResume?.skills ?? [];
                               final updatedCategorySkills = List<String>.from(category.skills)..removeAt(skillIndex);
-                              currentSkills[catIndex] = category.copyWith(skills: updatedCategorySkills);
-                              resumeService.updateSkills(currentSkills);
+                              final newList = List<SkillCategory>.from(current);
+                              newList[catIndex] = newList[catIndex].copyWith(skills: updatedCategorySkills);
+                              context.read<ResumeService>().updateSkills(newList);
                             },
-                            backgroundColor: Colors.white,
+                            backgroundColor: isDark ? const Color(0xFF0F172A) : Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
-                              side: BorderSide(color: Colors.grey.shade300),
+                              side: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
                             ),
                           );
                         }),
                         ActionChip(
-                          avatar: const Icon(Icons.add, size: 14),
-                          label: const Text('Add Skill'),
+                          avatar: Icon(Icons.add, size: 14, color: isDark ? Colors.blueAccent : const Color(0xFF0A2540)),
+                          label: Text('Add Skill', style: TextStyle(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540))),
                           onPressed: () async {
                             final controller = TextEditingController();
                             final skill = await showDialog<String>(
@@ -174,10 +179,11 @@ class SkillsForm extends StatelessWidget {
                             );
 
                             if (skill != null && skill.isNotEmpty) {
-                              final currentSkills = List<SkillCategory>.from(resumeService.currentResume?.skills ?? []);
+                              final current = context.read<ResumeService>().currentResume?.skills ?? [];
                               final updatedCategorySkills = List<String>.from(category.skills)..add(skill);
-                              currentSkills[catIndex] = category.copyWith(skills: updatedCategorySkills);
-                              resumeService.updateSkills(currentSkills);
+                              final newList = List<SkillCategory>.from(current);
+                              newList[catIndex] = newList[catIndex].copyWith(skills: updatedCategorySkills);
+                              context.read<ResumeService>().updateSkills(newList);
                             }
                           },
                         ),

@@ -7,16 +7,17 @@ import '../../../core/services/resume_service.dart';
 class ExperienceForm extends StatelessWidget {
   const ExperienceForm({super.key});
 
-  Widget _buildInputField(String label, String initialValue, Function(String) onChanged, {int maxLines = 1}) {
+  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged, {int maxLines = 1}) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 10,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF64748B),
+            color: isDark ? Colors.white54 : const Color(0xFF64748B),
             letterSpacing: 1.0,
           ),
         ),
@@ -24,18 +25,21 @@ class ExperienceForm extends StatelessWidget {
         TextFormField(
           initialValue: initialValue,
           maxLines: maxLines,
+          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
           decoration: InputDecoration(
+            fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
+            filled: true,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: Colors.grey.shade300),
+              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
-              borderSide: const BorderSide(color: Color(0xFF0A2540), width: 2),
+              borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           ),
@@ -47,14 +51,13 @@ class ExperienceForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expCount = context.select<ResumeService, int>((s) => s.currentResume?.experience.length ?? 0);
-    final resumeService = context.read<ResumeService>();
-    final experiences = resumeService.currentResume?.experience ?? [];
+    final experiences = context.watch<ResumeService>().currentResume?.experience ?? [];
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: Colors.grey.shade200),
+        color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
         borderRadius: BorderRadius.circular(12),
       ),
       padding: const EdgeInsets.all(32.0),
@@ -78,11 +81,11 @@ class ExperienceForm extends StatelessWidget {
                   description: '',
                   bullets: [],
                 );
-                resumeService.updateExperience(<Experience>[...experiences, newExp]);
+                context.read<ResumeService>().updateExperience(<Experience>[...experiences, newExp]);
               },
               style: OutlinedButton.styleFrom(
-                foregroundColor: const Color(0xFF0A2540),
-                side: BorderSide(color: Colors.grey.shade300),
+                foregroundColor: isDark ? Colors.white : const Color(0xFF0A2540),
+                side: BorderSide(color: isDark ? Colors.white24 : Colors.grey.shade300),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
             ),
@@ -96,8 +99,8 @@ class ExperienceForm extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF8FAFC),
-                  border: Border.all(color: Colors.grey.shade200),
+                  color: isDark ? const Color(0xFF1E293B) : const Color(0xFFF8FAFC),
+                  border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
@@ -106,10 +109,10 @@ class ExperienceForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField('Job Title', exp.jobTitle, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(jobTitle: val);
+                          child: _buildInputField(context, 'Job Title', exp.jobTitle, (val) {
+                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                            final newList = List<Experience>.from(current);
+                            newList[index] = newList[index].copyWith(jobTitle: val);
                             context.read<ResumeService>().updateExperience(newList);
                           }),
                         ),
@@ -117,47 +120,47 @@ class ExperienceForm extends StatelessWidget {
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                           onPressed: () {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps)..removeAt(index);
+                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                            final newList = List<Experience>.from(current)..removeAt(index);
                             context.read<ResumeService>().updateExperience(newList);
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField('Company', exp.company, (val) {
-                      final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(currentExps);
-                      newList[index] = exp.copyWith(company: val);
+                    _buildInputField(context, 'Company', exp.company, (val) {
+                      final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                      final newList = List<Experience>.from(current);
+                      newList[index] = newList[index].copyWith(company: val);
                       context.read<ResumeService>().updateExperience(newList);
                     }),
                     const SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField('Start Date', exp.startDate, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(startDate: val);
+                          child: _buildInputField(context, 'Start Date', exp.startDate, (val) {
+                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                            final newList = List<Experience>.from(current);
+                            newList[index] = newList[index].copyWith(startDate: val);
                             context.read<ResumeService>().updateExperience(newList);
                           }),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField('End Date', exp.endDate, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(endDate: val);
+                          child: _buildInputField(context, 'End Date', exp.endDate, (val) {
+                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                            final newList = List<Experience>.from(current);
+                            newList[index] = newList[index].copyWith(endDate: val);
                             context.read<ResumeService>().updateExperience(newList);
                           }),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField('Description', exp.description, (val) {
-                      final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(currentExps);
-                      newList[index] = exp.copyWith(description: val);
+                    _buildInputField(context, 'Description', exp.description, (val) {
+                      final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                      final newList = List<Experience>.from(current);
+                      newList[index] = newList[index].copyWith(description: val);
                       context.read<ResumeService>().updateExperience(newList);
                     }, maxLines: 3),
                   ],

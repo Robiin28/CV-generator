@@ -7,21 +7,19 @@ import '../models/resume_model.dart';
 class PdfService {
   static String _sanitize(String text) {
     if (text.isEmpty) return text;
+    // Replace problematic unicode characters with standard ASCII
     return text
+      .replaceAll(RegExp(r'[\u2018\u2019]'), "'") // Smart single quotes
+      .replaceAll(RegExp(r'[\u201C\u201D]'), '"') // Smart double quotes
+      .replaceAll(RegExp(r'[\u2013\u2014]'), '-') // En and Em dashes
       .replaceAll('\u2022', '-') // Bullet
-      .replaceAll('\u2013', '-') // En-dash
-      .replaceAll('\u2014', '-') // Em-dash
-      .replaceAll('\u2018', "'") // Left single quote
-      .replaceAll('\u2019', "'") // Right single quote
-      .replaceAll('\u201c', '"') // Left double quote
-      .replaceAll('\u201d', '"') // Right double quote
-      .replaceAll('–', '-') 
+      .replaceAll('•', '-')
+      .replaceAll('–', '-')
       .replaceAll('—', '-')
       .replaceAll('‘', "'")
       .replaceAll('’', "'")
       .replaceAll('“', '"')
-      .replaceAll('”', '"')
-      .replaceAll('•', '-');
+      .replaceAll('”', '"');
   }
 
   static Future<void> generateAndDownload(Resume resume) async {
