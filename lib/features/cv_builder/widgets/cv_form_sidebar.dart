@@ -4,6 +4,12 @@ import 'personal_info_form.dart';
 import 'summary_form.dart';
 import 'experience_form.dart';
 import 'education_form.dart';
+import 'skills_form.dart';
+import 'projects_form.dart';
+import 'languages_form.dart';
+import 'certifications_form.dart';
+import 'volunteering_form.dart';
+import 'custom_sections_form.dart';
 
 class CvFormSidebar extends StatefulWidget {
   const CvFormSidebar({super.key});
@@ -13,77 +19,139 @@ class CvFormSidebar extends StatefulWidget {
 }
 
 class _CvFormSidebarState extends State<CvFormSidebar> {
-  final List<bool> _isOpen = [true, false, false, false];
+  int _currentStep = 0;
+
+  final List<Map<String, dynamic>> _steps = [
+    {'title': 'Personal Info', 'icon': Icons.person_outline, 'form': const PersonalInfoForm()},
+    {'title': 'Summary', 'icon': Icons.description_outlined, 'form': const SummaryForm()},
+    {'title': 'Experience', 'icon': Icons.work_outline, 'form': const ExperienceForm()},
+    {'title': 'Education', 'icon': Icons.school_outlined, 'form': const EducationForm()},
+    {'title': 'Skills', 'icon': Icons.bolt_outlined, 'form': const SkillsForm()},
+    {'title': 'Projects', 'icon': Icons.code_outlined, 'form': const ProjectsForm()},
+    {'title': 'Languages', 'icon': Icons.language_outlined, 'form': const LanguagesForm()},
+    {'title': 'Certifications', 'icon': Icons.verified_outlined, 'form': const CertificationsForm()},
+    {'title': 'Volunteering', 'icon': Icons.favorite_outline, 'form': const VolunteeringForm()},
+    {'title': 'Add Sections', 'icon': Icons.add_circle_outline, 'form': const CustomSectionsForm()},
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: const Color(0xFFF8FAFC), // Surface Color
-      child: ListView(
-        padding: const EdgeInsets.all(32.0),
+      color: Colors.white,
+      child: Column(
         children: [
-          const Text(
-            'Edit Details',
-            style: TextStyle(
-              fontSize: 28, 
-              fontWeight: FontWeight.bold,
-              color: Color(0xFF0F172A), // Charcoal
+          // Edit / Preview Tabs (Placeholder for mobile)
+          // Category Navigation Bar
+          Container(
+            height: 100,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+            ),
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _steps.length,
+              itemBuilder: (context, index) {
+                final isSelected = _currentStep == index;
+                return GestureDetector(
+                  onTap: () => setState(() => _currentStep = index),
+                  child: Container(
+                    margin: const EdgeInsets.only(right: 12),
+                    width: 100,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: Border.all(
+                        color: isSelected ? const Color(0xFF0A2540) : Colors.grey.shade200,
+                        width: isSelected ? 2 : 1,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          _steps[index]['icon'],
+                          color: isSelected ? const Color(0xFF0A2540) : Colors.grey.shade500,
+                          size: 24,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _steps[index]['title'],
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected ? const Color(0xFF0A2540) : Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
             ),
           ),
-          const SizedBox(height: 24),
-          
-          ExpansionPanelList(
-            elevation: 1,
-            expandedHeaderPadding: EdgeInsets.zero,
-            expansionCallback: (int index, bool isExpanded) {
-              setState(() {
-                _isOpen[index] = isExpanded;
-              });
-            },
-            children: [
-              ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const ListTile(
-                  title: Text('Personal Information', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
-                  leading: Icon(Icons.person, color: Color(0xFF3B82F6)),
-                ),
-                body: const PersonalInfoForm(),
-                isExpanded: _isOpen[0],
-                canTapOnHeader: true,
-              ),
 
-              ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const ListTile(
-                  title: Text('Professional Summary', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
-                  leading: Icon(Icons.description, color: Color(0xFF3B82F6)),
+          // Form Header & Navigation Buttons
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        _steps[_currentStep]['title'],
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF0A2540),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      const Text(
+                        'Complete the details below.',
+                        style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                      ),
+                    ],
+                  ),
                 ),
-                body: const SummaryForm(),
-                isExpanded: _isOpen[1],
-                canTapOnHeader: true,
-              ),
-
-              ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const ListTile(
-                  title: Text('Work Experience', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
-                  leading: Icon(Icons.work, color: Color(0xFF3B82F6)),
+                Row(
+                  children: [
+                    OutlinedButton(
+                      onPressed: _currentStep > 0 ? () => setState(() => _currentStep--) : null,
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        side: BorderSide(color: Colors.grey.shade300),
+                      ),
+                      child: const Text('Prev', style: TextStyle(color: Color(0xFF334155))),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton(
+                      onPressed: _currentStep < _steps.length - 1 ? () => setState(() => _currentStep++) : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0A2540),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      ),
+                      child: const Text('Next'),
+                    ),
+                  ],
                 ),
-                body: const ExperienceForm(),
-                isExpanded: _isOpen[2],
-                canTapOnHeader: true,
-              ),
-
-              ExpansionPanel(
-                headerBuilder: (context, isExpanded) => const ListTile(
-                  title: Text('Education', style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
-                  leading: Icon(Icons.school, color: Color(0xFF3B82F6)),
-                ),
-                body: const EducationForm(),
-                isExpanded: _isOpen[3],
-                canTapOnHeader: true,
-              ),
-            ],
+              ],
+            ),
           ),
-          
-          const SizedBox(height: 40),
+
+          // Active Form Body
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: _steps[_currentStep]['form'],
+            ),
+          ),
         ],
       ),
     );

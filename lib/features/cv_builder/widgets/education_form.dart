@@ -7,154 +7,170 @@ import '../../../core/services/resume_service.dart';
 class EducationForm extends StatelessWidget {
   const EducationForm({super.key});
 
+  Widget _buildInputField(String label, String initialValue, Function(String) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label.toUpperCase(),
+          style: const TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF64748B),
+            letterSpacing: 1.0,
+          ),
+        ),
+        const SizedBox(height: 6),
+        TextFormField(
+          initialValue: initialValue,
+          decoration: InputDecoration(
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: const BorderSide(color: Color(0xFF0A2540), width: 2),
+            ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+          ),
+          onChanged: onChanged,
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    // FIX: Using context.select to only rebuild when the NUMBER of educations changes.
-    // This completely prevents the form from losing focus while typing!
     final eduCount = context.select<ResumeService, int>((s) => s.currentResume?.education.length ?? 0);
     final resumeService = context.read<ResumeService>();
     final educationList = resumeService.currentResume?.education ?? [];
 
-    return Card(
-      elevation: 0,
-      color: Colors.white,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.grey.shade200),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: Colors.grey.shade200),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text('Education', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-                IconButton(
-                  icon: const Icon(Icons.add_circle, color: Color(0xFF3B82F6)), // Premium Blue
-                  onPressed: () {
-                    final newEdu = Education(
-                      id: DateTime.now().millisecondsSinceEpoch.toString(),
-                      school: '',
-                      degree: '',
-                      fieldOfStudy: '',
-                      startDate: '',
-                      endDate: '',
-                      description: '',
-                    );
-                    resumeService.updateEducation([...educationList, newEdu]);
-                  },
-                ),
-              ],
+      padding: const EdgeInsets.all(32.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Align(
+            alignment: Alignment.centerRight,
+            child: OutlinedButton.icon(
+              icon: const Icon(Icons.add, size: 18),
+              label: const Text('Add Education'),
+              onPressed: () {
+                final newEdu = Education(
+                  id: DateTime.now().millisecondsSinceEpoch.toString(),
+                  school: '',
+                  degree: '',
+                  fieldOfStudy: '',
+                  startDate: '',
+                  endDate: '',
+                  description: '',
+                );
+                resumeService.updateEducation([...educationList, newEdu]);
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xFF0A2540),
+                side: BorderSide(color: Colors.grey.shade300),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
             ),
-            const SizedBox(height: 16),
-            ...educationList.asMap().entries.map((entry) {
-              final index = entry.key;
-              final edu = entry.value;
-              return Padding(
-                padding: const EdgeInsets.only(bottom: 24.0),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF8FAFC),
-                    border: Border.all(color: Colors.grey.shade200),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: edu.school,
-                              decoration: const InputDecoration(labelText: 'School/University', isDense: true, border: OutlineInputBorder()),
-                              onChanged: (val) {
-                                final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
-                                final newList = List<Education>.from(currentEdu);
-                                newList[index] = edu.copyWith(school: val);
-                                context.read<ResumeService>().updateEducation(newList);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.redAccent),
-                            onPressed: () {
-                              final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
-                              final newList = List<Education>.from(currentEdu)..removeAt(index);
-                              context.read<ResumeService>().updateEducation(newList);
-                            },
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: edu.degree,
-                              decoration: const InputDecoration(labelText: 'Degree', isDense: true, border: OutlineInputBorder()),
-                              onChanged: (val) {
-                                final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
-                                final newList = List<Education>.from(currentEdu);
-                                newList[index] = edu.copyWith(degree: val);
-                                context.read<ResumeService>().updateEducation(newList);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: edu.fieldOfStudy,
-                              decoration: const InputDecoration(labelText: 'Field of Study', isDense: true, border: OutlineInputBorder()),
-                              onChanged: (val) {
-                                final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
-                                final newList = List<Education>.from(currentEdu);
-                                newList[index] = edu.copyWith(fieldOfStudy: val);
-                                context.read<ResumeService>().updateEducation(newList);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: edu.startDate,
-                              decoration: const InputDecoration(labelText: 'Start Date', isDense: true, border: OutlineInputBorder()),
-                              onChanged: (val) {
-                                final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
-                                final newList = List<Education>.from(currentEdu);
-                                newList[index] = edu.copyWith(startDate: val);
-                                context.read<ResumeService>().updateEducation(newList);
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: TextFormField(
-                              initialValue: edu.endDate,
-                              decoration: const InputDecoration(labelText: 'End Date', isDense: true, border: OutlineInputBorder()),
-                              onChanged: (val) {
-                                final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
-                                final newList = List<Education>.from(currentEdu);
-                                newList[index] = edu.copyWith(endDate: val);
-                                context.read<ResumeService>().updateEducation(newList);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+          ),
+          const SizedBox(height: 24),
+          ...educationList.asMap().entries.map((entry) {
+            final index = entry.key;
+            final edu = entry.value;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 32.0),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8FAFC),
+                  border: Border.all(color: Colors.grey.shade200),
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            }),
-          ],
-        ),
+                child: Column(
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildInputField('School / University', edu.school, (val) {
+                            final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
+                            final newList = List<Education>.from(currentEdu);
+                            newList[index] = edu.copyWith(school: val);
+                            context.read<ResumeService>().updateEducation(newList);
+                          }),
+                        ),
+                        const SizedBox(width: 16),
+                        IconButton(
+                          icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+                          onPressed: () {
+                            final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
+                            final newList = List<Education>.from(currentEdu)..removeAt(index);
+                            context.read<ResumeService>().updateEducation(newList);
+                          },
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInputField('Degree', edu.degree, (val) {
+                            final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
+                            final newList = List<Education>.from(currentEdu);
+                            newList[index] = edu.copyWith(degree: val);
+                            context.read<ResumeService>().updateEducation(newList);
+                          }),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildInputField('Field of Study', edu.fieldOfStudy, (val) {
+                            final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
+                            final newList = List<Education>.from(currentEdu);
+                            newList[index] = edu.copyWith(fieldOfStudy: val);
+                            context.read<ResumeService>().updateEducation(newList);
+                          }),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildInputField('Start Date', edu.startDate, (val) {
+                            final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
+                            final newList = List<Education>.from(currentEdu);
+                            newList[index] = edu.copyWith(startDate: val);
+                            context.read<ResumeService>().updateEducation(newList);
+                          }),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildInputField('End Date', edu.endDate, (val) {
+                            final currentEdu = context.read<ResumeService>().currentResume?.education ?? [];
+                            final newList = List<Education>.from(currentEdu);
+                            newList[index] = edu.copyWith(endDate: val);
+                            context.read<ResumeService>().updateEducation(newList);
+                          }),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+        ],
       ),
     );
   }

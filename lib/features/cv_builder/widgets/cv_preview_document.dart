@@ -64,6 +64,8 @@ class CvPreviewDocument extends StatelessWidget {
                       _IconText(Icons.phone, resume.personalInfo.phone),
                     if (resume.personalInfo.location.isNotEmpty)
                       _IconText(Icons.location_on, resume.personalInfo.location),
+                    if (resume.personalInfo.customFields != null)
+                      ...resume.personalInfo.customFields!.map((f) => _IconText(Icons.info_outline, '${f.label}: ${f.value}')),
                   ],
                 ),
               ],
@@ -134,6 +136,144 @@ class CvPreviewDocument extends StatelessWidget {
                   Text(edu.school, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155))),
                 ],
               ),
+            )),
+          ],
+
+          // Skills Section
+          if (resume.skills.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            const Text('SKILLS', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            ...resume.skills.map((category) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: RichText(
+                text: TextSpan(
+                  style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 14),
+                  children: [
+                    TextSpan(
+                      text: '${category.category}: ',
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                    ),
+                    TextSpan(text: category.skills.join(', ')),
+                  ],
+                ),
+              ),
+            )),
+          ],
+          // Projects Section
+          if (resume.projects != null && resume.projects!.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            const Text('PROJECTS', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            ...resume.projects!.map((proj) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(proj.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
+                  if (proj.technologies.isNotEmpty)
+                    Text('Technologies: ${proj.technologies}', style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 12)),
+                  const SizedBox(height: 4),
+                  Text(proj.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569))),
+                ],
+              ),
+            )),
+          ],
+
+          // Languages Section
+          if (resume.languages != null && resume.languages!.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            const Text('LANGUAGES', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              children: resume.languages!.map((lang) => RichText(
+                text: TextSpan(
+                  style: const TextStyle(color: Color(0xFF475569), fontSize: 14),
+                  children: [
+                    TextSpan(text: lang.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
+                    TextSpan(text: ': ${lang.level}'),
+                  ],
+                ),
+              )).toList(),
+            ),
+          ],
+
+          // Certifications Section
+          if (resume.certifications != null && resume.certifications!.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            const Text('CERTIFICATIONS', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            ...resume.certifications!.map((cert) => Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(cert.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
+                        Text(cert.issuer, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 12)),
+                      ],
+                    ),
+                  ),
+                  Text(cert.date, style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+                ],
+              ),
+            )),
+          ],
+
+          // Volunteering Section
+          if (resume.volunteering != null && resume.volunteering!.isNotEmpty) ...[
+            const SizedBox(height: 24),
+            const Text('VOLUNTEERING & ACTIVITIES', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            ...resume.volunteering!.map((vol) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(vol.role, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
+                      Text('${vol.startDate} - ${vol.endDate}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+                    ],
+                  ),
+                  Text(vol.organization, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155))),
+                  const SizedBox(height: 4),
+                  Text(vol.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569))),
+                ],
+              ),
+            )),
+          ],
+
+          // Custom Sections Section
+          if (resume.customSections != null && resume.customSections!.isNotEmpty) ...[
+            ...resume.customSections!.map((section) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
+                Text(section.title.toUpperCase(), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+                const SizedBox(height: 12),
+                ...section.items.map((item) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: RichText(
+                    text: TextSpan(
+                      style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 14),
+                      children: [
+                        TextSpan(
+                          text: '${item.label}: ',
+                          style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                        ),
+                        TextSpan(text: item.value),
+                      ],
+                    ),
+                  ),
+                )),
+              ],
             )),
           ],
         ],

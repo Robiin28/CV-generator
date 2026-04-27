@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
 
-class ExperienceForm extends StatelessWidget {
-  const ExperienceForm({super.key});
+class CertificationsForm extends StatelessWidget {
+  const CertificationsForm({super.key});
 
-  Widget _buildInputField(String label, String initialValue, Function(String) onChanged, {int maxLines = 1}) {
+  Widget _buildInputField(String label, String initialValue, Function(String) onChanged) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -23,7 +23,6 @@ class ExperienceForm extends StatelessWidget {
         const SizedBox(height: 6),
         TextFormField(
           initialValue: initialValue,
-          maxLines: maxLines,
           decoration: InputDecoration(
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
@@ -47,9 +46,9 @@ class ExperienceForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expCount = context.select<ResumeService, int>((s) => s.currentResume?.experience.length ?? 0);
+    final certificationsCount = context.select<ResumeService, int>((s) => s.currentResume?.certifications?.length ?? 0);
     final resumeService = context.read<ResumeService>();
-    final experiences = resumeService.currentResume?.experience ?? [];
+    final certifications = resumeService.currentResume?.certifications ?? [];
 
     return Container(
       decoration: BoxDecoration(
@@ -65,20 +64,15 @@ class ExperienceForm extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Experience'),
+              label: const Text('Add Certification'),
               onPressed: () {
-                final newExp = Experience(
+                final newCertification = Certification(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  jobTitle: '',
-                  company: '',
-                  location: '',
-                  startDate: '',
-                  endDate: '',
-                  current: false,
-                  description: '',
-                  bullets: [],
+                  name: '',
+                  issuer: '',
+                  date: '',
                 );
-                resumeService.updateExperience([...experiences, newExp]);
+                resumeService.updateCertifications([...certifications, newCertification]);
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF0A2540),
@@ -88,11 +82,12 @@ class ExperienceForm extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          ...experiences.asMap().entries.map((entry) {
+          ...certifications.asMap().entries.map((entry) {
             final index = entry.key;
-            final exp = entry.value;
+            final cert = entry.value;
+
             return Padding(
-              padding: const EdgeInsets.only(bottom: 32.0),
+              padding: const EdgeInsets.only(bottom: 24.0),
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
@@ -106,60 +101,43 @@ class ExperienceForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField('Job Title', exp.jobTitle, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(jobTitle: val);
-                            context.read<ResumeService>().updateExperience(newList);
+                          child: _buildInputField('Certification Name', cert.name, (val) {
+                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
+                            currentCerts[index] = cert.copyWith(name: val);
+                            resumeService.updateCertifications(currentCerts);
                           }),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                           onPressed: () {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps)..removeAt(index);
-                            context.read<ResumeService>().updateExperience(newList);
+                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
+                            currentCerts.removeAt(index);
+                            resumeService.updateCertifications(currentCerts);
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField('Company', exp.company, (val) {
-                      final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(currentExps);
-                      newList[index] = exp.copyWith(company: val);
-                      context.read<ResumeService>().updateExperience(newList);
-                    }),
-                    const SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField('Start Date', exp.startDate, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(startDate: val);
-                            context.read<ResumeService>().updateExperience(newList);
+                          child: _buildInputField('Issuer', cert.issuer, (val) {
+                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
+                            currentCerts[index] = cert.copyWith(issuer: val);
+                            resumeService.updateCertifications(currentCerts);
                           }),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField('End Date', exp.endDate, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(endDate: val);
-                            context.read<ResumeService>().updateExperience(newList);
+                          child: _buildInputField('Date', cert.date, (val) {
+                            final currentCerts = List<Certification>.from(resumeService.currentResume?.certifications ?? []);
+                            currentCerts[index] = cert.copyWith(date: val);
+                            resumeService.updateCertifications(currentCerts);
                           }),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 20),
-                    _buildInputField('Description', exp.description, (val) {
-                      final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(currentExps);
-                      newList[index] = exp.copyWith(description: val);
-                      context.read<ResumeService>().updateExperience(newList);
-                    }, maxLines: 3),
                   ],
                 ),
               ),

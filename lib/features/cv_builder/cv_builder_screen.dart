@@ -15,23 +15,69 @@ class CvBuilderScreen extends StatelessWidget {
         foregroundColor: Colors.white,
         elevation: 0,
       ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {},
+        icon: const Icon(Icons.auto_awesome),
+        label: const Text('AI Assistant'),
+        backgroundColor: const Color(0xFF0A2540),
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isNarrow = constraints.maxWidth < 900;
           
           final previewPane = Container(
             color: const Color(0xFF020617), 
-            child: const SingleChildScrollView(
-              scrollDirection: Axis.vertical,
-              child: SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 40),
-                  child: Center(
-                    child: CvPreviewDocument(),
+            child: Column(
+              children: [
+                // Preview Toolbar
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0F172A),
+                    border: Border(bottom: BorderSide(color: Colors.white.withAlpha(20))),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Row(
+                        children: [
+                          CircleAvatar(radius: 4, backgroundColor: Colors.green),
+                          SizedBox(width: 8),
+                          Text(
+                            'Continuous Print Layout',
+                            style: TextStyle(color: Colors.white, fontSize: 13),
+                          ),
+                        ],
+                      ),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.download, size: 18),
+                        label: const Text('Download PDF'),
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF0A2540),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ),
+                const Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.vertical,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 40),
+                        child: Center(
+                          child: CvPreviewDocument(),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           );
 
@@ -41,7 +87,7 @@ class CvBuilderScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(
-                  height: 400,
+                  height: 450,
                   child: CvFormSidebar(),
                 ),
                 const Divider(height: 1, thickness: 1, color: Color(0xFFE2E8F0)),
@@ -54,14 +100,11 @@ class CvBuilderScreen extends StatelessWidget {
           return Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Fixed width ensures the text NEVER gets squashed vertically
               const SizedBox(
-                width: 450, 
+                width: 500, 
                 child: CvFormSidebar(),
               ),
-              
               const VerticalDivider(width: 1, thickness: 1, color: Color(0xFFE2E8F0)),
-
               Expanded(child: previewPane),
             ],
           );

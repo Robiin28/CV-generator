@@ -262,6 +262,16 @@ class SkillCategory {
   final String category;
   final List<String> skills;
   SkillCategory({required this.category, required this.skills});
+
+  SkillCategory copyWith({
+    String? category,
+    List<String>? skills,
+  }) {
+    return SkillCategory(
+      category: category ?? this.category,
+      skills: skills ?? this.skills,
+    );
+  }
 }
 
 class Project {
@@ -281,6 +291,26 @@ class Project {
     this.link,
     this.github,
   });
+
+  Project copyWith({
+    String? id,
+    String? name,
+    String? description,
+    String? technologies,
+    List<String>? bullets,
+    String? link,
+    String? github,
+  }) {
+    return Project(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      technologies: technologies ?? this.technologies,
+      bullets: bullets ?? this.bullets,
+      link: link ?? this.link,
+      github: github ?? this.github,
+    );
+  }
 }
 
 class Certification {
@@ -296,6 +326,22 @@ class Certification {
     required this.date,
     this.url,
   });
+
+  Certification copyWith({
+    String? id,
+    String? name,
+    String? issuer,
+    String? date,
+    String? url,
+  }) {
+    return Certification(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      issuer: issuer ?? this.issuer,
+      date: date ?? this.date,
+      url: url ?? this.url,
+    );
+  }
 }
 
 class Language {
@@ -303,6 +349,18 @@ class Language {
   final String name;
   final String level;
   Language({required this.id, required this.name, required this.level});
+
+  Language copyWith({
+    String? id,
+    String? name,
+    String? level,
+  }) {
+    return Language(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      level: level ?? this.level,
+    );
+  }
 }
 
 class CEFRLanguage {
@@ -341,4 +399,26 @@ class Volunteering {
     required this.current,
     required this.description,
   });
+
+  Volunteering copyWith({
+    String? id,
+    String? role,
+    String? organization,
+    String? location,
+    String? startDate,
+    String? endDate,
+    bool? current,
+    String? description,
+  }) {
+    return Volunteering(
+      id: id ?? this.id,
+      role: role ?? this.role,
+      organization: organization ?? this.organization,
+      location: location ?? this.location,
+      startDate: startDate ?? this.startDate,
+      endDate: endDate ?? this.endDate,
+      current: current ?? this.current,
+      description: description ?? this.description,
+    );
+  }
 }

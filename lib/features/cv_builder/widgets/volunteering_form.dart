@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
 
-class ExperienceForm extends StatelessWidget {
-  const ExperienceForm({super.key});
+class VolunteeringForm extends StatelessWidget {
+  const VolunteeringForm({super.key});
 
   Widget _buildInputField(String label, String initialValue, Function(String) onChanged, {int maxLines = 1}) {
     return Column(
@@ -47,9 +47,9 @@ class ExperienceForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final expCount = context.select<ResumeService, int>((s) => s.currentResume?.experience.length ?? 0);
+    final volunteeringCount = context.select<ResumeService, int>((s) => s.currentResume?.volunteering?.length ?? 0);
     final resumeService = context.read<ResumeService>();
-    final experiences = resumeService.currentResume?.experience ?? [];
+    final volunteering = resumeService.currentResume?.volunteering ?? [];
 
     return Container(
       decoration: BoxDecoration(
@@ -65,20 +65,19 @@ class ExperienceForm extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: OutlinedButton.icon(
               icon: const Icon(Icons.add, size: 18),
-              label: const Text('Add Experience'),
+              label: const Text('Add Volunteering'),
               onPressed: () {
-                final newExp = Experience(
+                final newVolunteering = Volunteering(
                   id: DateTime.now().millisecondsSinceEpoch.toString(),
-                  jobTitle: '',
-                  company: '',
+                  role: '',
+                  organization: '',
                   location: '',
                   startDate: '',
                   endDate: '',
                   current: false,
                   description: '',
-                  bullets: [],
                 );
-                resumeService.updateExperience([...experiences, newExp]);
+                resumeService.updateVolunteering([...volunteering, newVolunteering]);
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF0A2540),
@@ -88,9 +87,10 @@ class ExperienceForm extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          ...experiences.asMap().entries.map((entry) {
+          ...volunteering.asMap().entries.map((entry) {
             final index = entry.key;
-            final exp = entry.value;
+            final vol = entry.value;
+
             return Padding(
               padding: const EdgeInsets.only(bottom: 32.0),
               child: Container(
@@ -106,59 +106,60 @@ class ExperienceForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField('Job Title', exp.jobTitle, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(jobTitle: val);
-                            context.read<ResumeService>().updateExperience(newList);
+                          child: _buildInputField('Role / Position', vol.role, (val) {
+                            final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                            currentVol[index] = vol.copyWith(role: val);
+                            resumeService.updateVolunteering(currentVol);
                           }),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
                           onPressed: () {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps)..removeAt(index);
-                            context.read<ResumeService>().updateExperience(newList);
+                            final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                            currentVol.removeAt(index);
+                            resumeService.updateVolunteering(currentVol);
                           },
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField('Company', exp.company, (val) {
-                      final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(currentExps);
-                      newList[index] = exp.copyWith(company: val);
-                      context.read<ResumeService>().updateExperience(newList);
+                    _buildInputField('Organization', vol.organization, (val) {
+                      final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                      currentVol[index] = vol.copyWith(organization: val);
+                      resumeService.updateVolunteering(currentVol);
+                    }),
+                    const SizedBox(height: 20),
+                    _buildInputField('Location', vol.location, (val) {
+                      final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                      currentVol[index] = vol.copyWith(location: val);
+                      resumeService.updateVolunteering(currentVol);
                     }),
                     const SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField('Start Date', exp.startDate, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(startDate: val);
-                            context.read<ResumeService>().updateExperience(newList);
+                          child: _buildInputField('Start Date', vol.startDate, (val) {
+                            final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                            currentVol[index] = vol.copyWith(startDate: val);
+                            resumeService.updateVolunteering(currentVol);
                           }),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField('End Date', exp.endDate, (val) {
-                            final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(currentExps);
-                            newList[index] = exp.copyWith(endDate: val);
-                            context.read<ResumeService>().updateExperience(newList);
+                          child: _buildInputField('End Date', vol.endDate, (val) {
+                            final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                            currentVol[index] = vol.copyWith(endDate: val);
+                            resumeService.updateVolunteering(currentVol);
                           }),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField('Description', exp.description, (val) {
-                      final currentExps = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(currentExps);
-                      newList[index] = exp.copyWith(description: val);
-                      context.read<ResumeService>().updateExperience(newList);
+                    _buildInputField('Description', vol.description, (val) {
+                      final currentVol = List<Volunteering>.from(resumeService.currentResume?.volunteering ?? []);
+                      currentVol[index] = vol.copyWith(description: val);
+                      resumeService.updateVolunteering(currentVol);
                     }, maxLines: 3),
                   ],
                 ),
