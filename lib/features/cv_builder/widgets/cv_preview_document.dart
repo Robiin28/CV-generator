@@ -46,66 +46,84 @@ class CvPreviewDocument extends StatelessWidget {
               children: [
                 Text(
                   resume.personalInfo.fullName.toUpperCase(),
-                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, letterSpacing: 1.5, color: Color(0xFF0A2540)),
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 1.0, color: Color(0xFF0F172A)),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Text(
                   resume.personalInfo.jobTitle?.toUpperCase() ?? '',
-                  style: const TextStyle(fontSize: 14, color: Color(0xFF334155), letterSpacing: 1.2),
+                  style: const TextStyle(fontSize: 13, color: Color(0xFF475569), letterSpacing: 0.5, fontWeight: FontWeight.w500),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 16),
+                // Centered contact line like the website
                 Wrap(
                   alignment: WrapAlignment.center,
-                  spacing: 16,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    if (resume.personalInfo.email.isNotEmpty)
-                      _IconText(Icons.email, resume.personalInfo.email),
-                    if (resume.personalInfo.phone.isNotEmpty)
-                      _IconText(Icons.phone, resume.personalInfo.phone),
+                    if (resume.personalInfo.phone.isNotEmpty) ...[
+                      Text('Phone: ${resume.personalInfo.phone}', style: const TextStyle(fontSize: 11, color: Color(0xFF0F172A))),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('|', style: TextStyle(color: Color(0xFFCBD5E1))),
+                      ),
+                    ],
+                    if (resume.personalInfo.email.isNotEmpty) ...[
+                      Text('Email: ${resume.personalInfo.email}', style: const TextStyle(fontSize: 11, color: Color(0xFF0F172A))),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8),
+                        child: Text('|', style: TextStyle(color: Color(0xFFCBD5E1))),
+                      ),
+                    ],
                     if (resume.personalInfo.location.isNotEmpty)
-                      _IconText(Icons.location_on, resume.personalInfo.location),
-                    if (resume.personalInfo.customFields != null)
-                      ...resume.personalInfo.customFields!.map((f) => _IconText(Icons.info_outline, '${f.label}: ${f.value}')),
+                      Text('Location: ${resume.personalInfo.location}', style: const TextStyle(fontSize: 11, color: Color(0xFF0F172A))),
                   ],
                 ),
+                const SizedBox(height: 8),
+                if (resume.personalInfo.linkedin != null || resume.personalInfo.website != null)
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      if (resume.personalInfo.linkedin != null) ...[
+                        Text('LinkedIn: ${resume.personalInfo.linkedin}', style: const TextStyle(fontSize: 11, color: Color(0xFF2563EB), decoration: TextDecoration.underline)),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8),
+                          child: Text('|', style: TextStyle(color: Color(0xFFCBD5E1))),
+                        ),
+                      ],
+                      if (resume.personalInfo.website != null)
+                        Text('Portfolio: ${resume.personalInfo.website}', style: const TextStyle(fontSize: 11, color: Color(0xFF2563EB), decoration: TextDecoration.underline)),
+                    ],
+                  ),
               ],
             ),
           ),
           
-          const Divider(height: 32, thickness: 1, color: Color(0xFFE2E8F0)),
+          const SizedBox(height: 24),
+          const Divider(thickness: 2, color: Color(0xFF0F172A)),
+          const SizedBox(height: 24),
 
           // Summary Section
           if (resume.summary.isNotEmpty) ...[
-            const Text('PROFESSIONAL SUMMARY', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
-            const SizedBox(height: 8),
-            Text(resume.summary, style: const TextStyle(height: 1.5, color: Color(0xFF475569))),
-            const SizedBox(height: 24),
+            const _SectionHeader('PROFESSIONAL SUMMARY'),
+            const SizedBox(height: 12),
+            Text(resume.summary, style: const TextStyle(height: 1.6, color: Color(0xFF334155), fontSize: 13)),
+            const SizedBox(height: 32),
           ],
 
           // Experience Section
           if (resume.experience.isNotEmpty) ...[
-            const Text('EXPERIENCE', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const _SectionHeader('EXPERIENCE'),
             const SizedBox(height: 12),
-            // Fix: removed unnecessary toList() in spread
             ...resume.experience.map((exp) => Padding(
-              padding: const EdgeInsets.only(bottom: 16),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(exp.jobTitle, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-                      ),
-                      const SizedBox(width: 16),
-                      Text('${exp.startDate} - ${exp.endDate}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
-                    ],
-                  ),
-                  Text('${exp.company} | ${exp.location}', style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155))),
+                  Text(exp.jobTitle.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 14)),
+                  const SizedBox(height: 2),
+                  Text('${exp.company} | ${exp.startDate} – ${exp.endDate}', style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF475569), fontSize: 12)),
                   const SizedBox(height: 8),
-                  Text(exp.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569))),
+                  Text(exp.description, style: const TextStyle(height: 1.5, color: Color(0xFF334155), fontSize: 12)),
                 ],
               ),
             )),
@@ -114,26 +132,15 @@ class CvPreviewDocument extends StatelessWidget {
 
           // Education Section
           if (resume.education.isNotEmpty) ...[
-            const Text('EDUCATION', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const _SectionHeader('EDUCATION'),
             const SizedBox(height: 12),
-            // Fix: removed unnecessary toList() in spread
             ...resume.education.map((edu) => Padding(
               padding: const EdgeInsets.only(bottom: 16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: Text(edu.degree, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-                      ),
-                      const SizedBox(width: 16),
-                      Text('${edu.startDate} - ${edu.endDate}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
-                    ],
-                  ),
-                  Text(edu.school, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155))),
+                  Text(edu.degree.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 14)),
+                  Text('${edu.school} | ${edu.startDate} – ${edu.endDate}', style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF475569), fontSize: 12)),
                 ],
               ),
             )),
@@ -141,18 +148,18 @@ class CvPreviewDocument extends StatelessWidget {
 
           // Skills Section
           if (resume.skills.isNotEmpty) ...[
-            const SizedBox(height: 24),
-            const Text('SKILLS', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            const _SectionHeader('SKILLS'),
             const SizedBox(height: 12),
             ...resume.skills.map((category) => Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 6),
               child: RichText(
                 text: TextSpan(
-                  style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 14),
+                  style: const TextStyle(height: 1.5, color: Color(0xFF334155), fontSize: 12),
                   children: [
                     TextSpan(
                       text: '${category.category}: ',
-                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155)),
+                      style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A)),
                     ),
                     TextSpan(text: category.skills.join(', ')),
                   ],
@@ -160,21 +167,22 @@ class CvPreviewDocument extends StatelessWidget {
               ),
             )),
           ],
+
           // Projects Section
           if (resume.projects != null && resume.projects!.isNotEmpty) ...[
-            const SizedBox(height: 24),
-            const Text('PROJECTS', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            const _SectionHeader('PROJECTS'),
             const SizedBox(height: 12),
             ...resume.projects!.map((proj) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(proj.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
+                  Text(proj.name.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 13)),
                   if (proj.technologies.isNotEmpty)
-                    Text('Technologies: ${proj.technologies}', style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 12)),
+                    Text('Technologies: ${proj.technologies}', style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 11)),
                   const SizedBox(height: 4),
-                  Text(proj.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569))),
+                  Text(proj.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 12)),
                 ],
               ),
             )),
@@ -182,15 +190,15 @@ class CvPreviewDocument extends StatelessWidget {
 
           // Languages Section
           if (resume.languages != null && resume.languages!.isNotEmpty) ...[
-            const SizedBox(height: 24),
-            const Text('LANGUAGES', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            const _SectionHeader('LANGUAGES'),
             const SizedBox(height: 12),
             Wrap(
               spacing: 16,
               runSpacing: 8,
               children: resume.languages!.map((lang) => RichText(
                 text: TextSpan(
-                  style: const TextStyle(color: Color(0xFF475569), fontSize: 14),
+                  style: const TextStyle(color: Color(0xFF475569), fontSize: 12),
                   children: [
                     TextSpan(text: lang.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF334155))),
                     TextSpan(text: ': ${lang.level}'),
@@ -202,8 +210,8 @@ class CvPreviewDocument extends StatelessWidget {
 
           // Certifications Section
           if (resume.certifications != null && resume.certifications!.isNotEmpty) ...[
-            const SizedBox(height: 24),
-            const Text('CERTIFICATIONS', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            const _SectionHeader('CERTIFICATIONS'),
             const SizedBox(height: 12),
             ...resume.certifications!.map((cert) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -214,12 +222,12 @@ class CvPreviewDocument extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(cert.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-                        Text(cert.issuer, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 12)),
+                        Text(cert.name, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 13)),
+                        Text(cert.issuer, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 11)),
                       ],
                     ),
                   ),
-                  Text(cert.date, style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+                  Text(cert.date, style: const TextStyle(color: Color(0xFF64748B), fontSize: 11)),
                 ],
               ),
             )),
@@ -227,8 +235,8 @@ class CvPreviewDocument extends StatelessWidget {
 
           // Volunteering Section
           if (resume.volunteering != null && resume.volunteering!.isNotEmpty) ...[
-            const SizedBox(height: 24),
-            const Text('VOLUNTEERING & ACTIVITIES', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+            const SizedBox(height: 12),
+            const _SectionHeader('VOLUNTEERING & ACTIVITIES'),
             const SizedBox(height: 12),
             ...resume.volunteering!.map((vol) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -238,13 +246,13 @@ class CvPreviewDocument extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(vol.role, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A))),
-                      Text('${vol.startDate} - ${vol.endDate}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 12)),
+                      Text(vol.role.toUpperCase(), style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF0F172A), fontSize: 13)),
+                      Text('${vol.startDate} - ${vol.endDate}', style: const TextStyle(color: Color(0xFF64748B), fontSize: 11)),
                     ],
                   ),
-                  Text(vol.organization, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155))),
+                  Text(vol.organization, style: const TextStyle(fontStyle: FontStyle.italic, color: Color(0xFF334155), fontSize: 12)),
                   const SizedBox(height: 4),
-                  Text(vol.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569))),
+                  Text(vol.description, style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 12)),
                 ],
               ),
             )),
@@ -255,14 +263,14 @@ class CvPreviewDocument extends StatelessWidget {
             ...resume.customSections!.map((section) => Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 24),
-                Text(section.title.toUpperCase(), style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A2540))),
+                const SizedBox(height: 12),
+                _SectionHeader(section.title.toUpperCase()),
                 const SizedBox(height: 12),
                 ...section.items.map((item) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: RichText(
                     text: TextSpan(
-                      style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 14),
+                      style: const TextStyle(height: 1.4, color: Color(0xFF475569), fontSize: 12),
                       children: [
                         TextSpan(
                           text: '${item.label}: ',
@@ -278,6 +286,33 @@ class CvPreviewDocument extends StatelessWidget {
           ],
         ],
       ),
+    );
+  }
+}
+
+class _SectionHeader extends StatelessWidget {
+  final String title;
+  const _SectionHeader(this.title);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        const Expanded(child: Divider(thickness: 1.5, color: Color(0xFF0F172A))),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Text(
+            title,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F172A),
+              letterSpacing: 2.0,
+            ),
+          ),
+        ),
+        const Expanded(child: Divider(thickness: 1.5, color: Color(0xFF0F172A))),
+      ],
     );
   }
 }

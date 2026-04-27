@@ -154,7 +154,7 @@ class PersonalInfoForm extends StatelessWidget {
                 label: const Text('Add Field'),
                 onPressed: () {
                   final current = context.read<ResumeService>().currentResume!.personalInfo;
-                  final updatedFields = [...(current.customFields ?? []), CustomField(label: 'New Field', value: '')];
+                  final updatedFields = <CustomField>[...(current.customFields ?? []), CustomField(label: 'New Field', value: '')];
                   context.read<ResumeService>().updatePersonalInfo(current.copyWith(customFields: updatedFields));
                 },
                 style: OutlinedButton.styleFrom(

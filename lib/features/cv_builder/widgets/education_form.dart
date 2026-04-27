@@ -75,7 +75,7 @@ class EducationForm extends StatelessWidget {
                   endDate: '',
                   description: '',
                 );
-                resumeService.updateEducation([...educationList, newEdu]);
+                resumeService.updateEducation(<Education>[...educationList, newEdu]);
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF0A2540),

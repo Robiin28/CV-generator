@@ -78,7 +78,7 @@ class ExperienceForm extends StatelessWidget {
                   description: '',
                   bullets: [],
                 );
-                resumeService.updateExperience([...experiences, newExp]);
+                resumeService.updateExperience(<Experience>[...experiences, newExp]);
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: const Color(0xFF0A2540),

@@ -138,7 +138,7 @@ class CustomSectionsForm extends StatelessWidget {
                           label: const Text('Add Item', style: TextStyle(fontSize: 12)),
                           onPressed: () {
                             final current = List<CustomSection>.from(resumeService.currentResume?.customSections ?? []);
-                            final updatedItems = [...section.items, CustomField(label: 'Label', value: '')];
+                            final updatedItems = <CustomField>[...section.items, CustomField(label: 'Label', value: '')];
                             current[secIdx] = CustomSection(id: section.id, title: section.title, items: updatedItems);
                             resumeService.updateCustomSections(current);
                           },

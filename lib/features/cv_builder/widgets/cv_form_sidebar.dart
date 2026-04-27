@@ -40,11 +40,10 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
       color: Colors.white,
       child: Column(
         children: [
-          // Edit / Preview Tabs (Placeholder for mobile)
           // Category Navigation Bar
           Container(
-            height: 100,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            height: 90,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
@@ -58,12 +57,12 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                   onTap: () => setState(() => _currentStep = index),
                   child: Container(
                     margin: const EdgeInsets.only(right: 12),
-                    width: 100,
+                    width: 85,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       border: Border.all(
                         color: isSelected ? const Color(0xFF0A2540) : Colors.grey.shade200,
-                        width: isSelected ? 2 : 1,
+                        width: isSelected ? 1.5 : 1,
                       ),
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -72,17 +71,18 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                       children: [
                         Icon(
                           _steps[index]['icon'],
-                          color: isSelected ? const Color(0xFF0A2540) : Colors.grey.shade500,
-                          size: 24,
+                          color: isSelected ? const Color(0xFF0A2540) : const Color(0xFF64748B),
+                          size: 22,
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 6),
                         Text(
                           _steps[index]['title'],
                           style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                            color: isSelected ? const Color(0xFF0A2540) : Colors.grey.shade600,
+                            fontSize: 10,
+                            fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                            color: isSelected ? const Color(0xFF0A2540) : const Color(0xFF64748B),
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ],
                     ),
@@ -94,10 +94,10 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
 
           // Form Header & Navigation Buttons
           Padding(
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(20.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Expanded(
                   child: Column(
@@ -106,15 +106,15 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                       Text(
                         _steps[_currentStep]['title'],
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF0A2540),
+                          color: Color(0xFF0F172A),
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 2),
                       const Text(
                         'Complete the details below.',
-                        style: TextStyle(color: Color(0xFF64748B), fontSize: 14),
+                        style: TextStyle(color: Color(0xFF64748B), fontSize: 13),
                       ),
                     ],
                   ),
@@ -124,10 +124,11 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                     OutlinedButton(
                       onPressed: _currentStep > 0 ? () => setState(() => _currentStep--) : null,
                       style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                         side: BorderSide(color: Colors.grey.shade300),
                       ),
-                      child: const Text('Prev', style: TextStyle(color: Color(0xFF334155))),
+                      child: const Text('Prev', style: TextStyle(color: Color(0xFF334155), fontSize: 13)),
                     ),
                     const SizedBox(width: 8),
                     ElevatedButton(
@@ -135,9 +136,11 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF0A2540),
                         foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        elevation: 0,
                       ),
-                      child: const Text('Next'),
+                      child: const Text('Next', style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
