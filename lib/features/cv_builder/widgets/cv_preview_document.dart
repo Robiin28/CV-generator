@@ -1,40 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../core/services/resume_service.dart';
+import '../../../core/models/resume_model.dart';
 
 class CvPreviewDocument extends StatelessWidget {
   const CvPreviewDocument({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final resumeService = context.watch<ResumeService>();
-    final resume = resumeService.currentResume;
-
-    if (resume == null) {
-      return const Center(child: CircularProgressIndicator());
-    }
+    final resume = context.watch<ResumeService>().currentResume;
+    if (resume == null) return const Center(child: Text('No Resume Found'));
 
     return Container(
-      width: 210 * 3.7795275591, // A4 width in pixels (~793)
-      constraints: const BoxConstraints(
-        minHeight: 297 * 3.7795275591, // A4 height (~1122)
-      ),
-      margin: const EdgeInsets.symmetric(vertical: 40),
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
-      decoration: const BoxDecoration(
+      width: 793.7, // A4 width at 96 DPI
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black26,
+            color: Colors.black.withOpacity(0.1),
             blurRadius: 20,
-            offset: Offset(0, 10),
+            spreadRadius: 5,
           ),
         ],
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header Section (EXECUTIVE STYLE)
+          // Header
           Center(
             child: Column(
               children: [
@@ -48,90 +41,29 @@ class CvPreviewDocument extends StatelessWidget {
                     fontFamily: 'Segoe UI',
                   ),
                 ),
-                const SizedBox(height: 4),
-                if (resume.personalInfo.jobTitle != null)
+                if (resume.personalInfo.jobTitle != null) ...[
+                  const SizedBox(height: 4),
                   Text(
                     resume.personalInfo.jobTitle!.toUpperCase(),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
-                      fontSize: 16, 
+                      fontSize: 15, 
                       fontWeight: FontWeight.w800, 
                       color: Colors.black,
                       fontFamily: 'Segoe UI',
-                      letterSpacing: 0.2,
                     ),
                   ),
-                const SizedBox(height: 12),
-                // Centered contact line
-                Wrap(
-                  alignment: WrapAlignment.center,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    if (resume.personalInfo.phone.isNotEmpty) ...[
-                      RichText(text: TextSpan(
-                        style: const TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'Segoe UI'),
-                        children: [
-                          const TextSpan(text: 'Phone: ', style: TextStyle(fontWeight: FontWeight.w800)),
-                          TextSpan(text: resume.personalInfo.phone),
-                        ],
-                      )),
-                      const _Separator(),
-                    ],
-                    if (resume.personalInfo.email.isNotEmpty) ...[
-                      RichText(text: TextSpan(
-                        style: const TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'Segoe UI'),
-                        children: [
-                          const TextSpan(text: 'Email: ', style: TextStyle(fontWeight: FontWeight.w800)),
-                          TextSpan(text: resume.personalInfo.email),
-                        ],
-                      )),
-                      const _Separator(),
-                    ],
-                    if (resume.personalInfo.location.isNotEmpty)
-                      RichText(text: TextSpan(
-                        style: const TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'Segoe UI'),
-                        children: [
-                          const TextSpan(text: 'Location: ', style: TextStyle(fontWeight: FontWeight.w800)),
-                          TextSpan(text: resume.personalInfo.location),
-                        ],
-                      )),
-                  ],
+                ],
+                const SizedBox(height: 8),
+                Text(
+                  '${resume.personalInfo.phone}  |  ${resume.personalInfo.email}  |  ${resume.personalInfo.location}  |  ${resume.personalInfo.linkedin ?? ""}',
+                  style: const TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'Segoe UI'),
                 ),
-                if (resume.personalInfo.linkedin != null || resume.personalInfo.website != null || resume.personalInfo.github != null) ...[
-                  const SizedBox(height: 4),
-                  Wrap(
-                    alignment: WrapAlignment.center,
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    children: [
-                      if (resume.personalInfo.linkedin != null) ...[
-                        RichText(text: TextSpan(
-                          style: const TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'Segoe UI'),
-                          children: [
-                            const TextSpan(text: 'LinkedIn: ', style: TextStyle(fontWeight: FontWeight.w800)),
-                            TextSpan(text: resume.personalInfo.linkedin!.replaceAll('https://', '').replaceAll('www.', ''), style: const TextStyle(color: Color(0xFF2563EB), decoration: TextDecoration.underline)),
-                          ],
-                        )),
-                        const _Separator(),
-                      ],
-                      if (resume.personalInfo.website != null) ...[
-                        RichText(text: TextSpan(
-                          style: const TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'Segoe UI'),
-                          children: [
-                            const TextSpan(text: 'Portfolio: ', style: TextStyle(fontWeight: FontWeight.w800)),
-                            TextSpan(text: resume.personalInfo.website!.replaceAll('https://', '').replaceAll('www.', ''), style: const TextStyle(color: Color(0xFF2563EB), decoration: TextDecoration.underline)),
-                          ],
-                        )),
-                        const _Separator(),
-                      ],
-                      if (resume.personalInfo.github != null)
-                        RichText(text: TextSpan(
-                          style: const TextStyle(fontSize: 11, color: Colors.black, fontFamily: 'Segoe UI'),
-                          children: [
-                            const TextSpan(text: 'GitHub: ', style: TextStyle(fontWeight: FontWeight.w800)),
-                            TextSpan(text: resume.personalInfo.github!.replaceAll('https://', '').replaceAll('www.', ''), style: const TextStyle(color: Color(0xFF2563EB), decoration: TextDecoration.underline)),
-                          ],
-                        )),
-                    ],
+                if (resume.personalInfo.website != null && resume.personalInfo.website!.isNotEmpty) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    resume.personalInfo.website!,
+                    style: const TextStyle(fontSize: 13, color: Colors.black, fontStyle: FontStyle.italic, fontFamily: 'Segoe UI'),
                   ),
                 ],
               ],
@@ -152,29 +84,6 @@ class CvPreviewDocument extends StatelessWidget {
             const SizedBox(height: 24),
           ],
 
-          // Education Section
-          if (resume.education.isNotEmpty) ...[
-            const _SectionHeader('EDUCATION'),
-            const SizedBox(height: 12),
-            ...resume.education.map((edu) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${edu.degree}${edu.fieldOfStudy != null ? " ${edu.fieldOfStudy}" : ""}'.toUpperCase(), 
-                    style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 15, fontFamily: 'Segoe UI'),
-                  ),
-                  const SizedBox(height: 1),
-                  Text(
-                    '${edu.school} | ${edu.startDate} – ${edu.endDate}', 
-                    style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 14, fontFamily: 'Segoe UI'),
-                  ),
-                ],
-              ),
-            )),
-          ],
-
           // Experience Section
           if (resume.experience.isNotEmpty) ...[
             const _SectionHeader('PROFESSIONAL EXPERIENCE'),
@@ -190,7 +99,7 @@ class CvPreviewDocument extends StatelessWidget {
                   ),
                   const SizedBox(height: 2),
                   Text(
-                    '${exp.company} | ${exp.startDate} – ${exp.current ? "Present" : exp.endDate}', 
+                    '${exp.company} | ${exp.location} | ${exp.startDate} – ${exp.current ? "Present" : exp.endDate}', 
                     style: const TextStyle(fontWeight: FontWeight.w800, fontStyle: FontStyle.italic, color: Colors.black, fontSize: 14, fontFamily: 'Segoe UI'),
                   ),
                   if (exp.description.isNotEmpty) ...[
@@ -221,6 +130,29 @@ class CvPreviewDocument extends StatelessWidget {
             )),
           ],
 
+          // Education Section
+          if (resume.education.isNotEmpty) ...[
+            const _SectionHeader('EDUCATION'),
+            const SizedBox(height: 12),
+            ...resume.education.map((edu) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '${edu.degree} ${edu.fieldOfStudy}'.toUpperCase(), 
+                    style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 15, fontFamily: 'Segoe UI'),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    '${edu.school} | ${edu.startDate} – ${edu.endDate}', 
+                    style: const TextStyle(fontWeight: FontWeight.w500, color: Colors.black, fontSize: 14, fontFamily: 'Segoe UI'),
+                  ),
+                ],
+              ),
+            )),
+          ],
+
           // Skills Section
           if (resume.skills.isNotEmpty) ...[
             const _SectionHeader('SKILLS AND LANGUAGES'),
@@ -230,11 +162,11 @@ class CvPreviewDocument extends StatelessWidget {
               child: RichText(
                 textAlign: TextAlign.justify,
                 text: TextSpan(
-                  style: const TextStyle(height: 1.5, color: Colors.black, fontSize: 14, fontFamily: 'Segoe UI'),
+                  style: const TextStyle(height: 1.5, color: Colors.black, fontSize: 13, fontFamily: 'Segoe UI'),
                   children: [
                     TextSpan(
                       text: '${category.category.toUpperCase()}: ',
-                      style: const TextStyle(fontWeight: FontWeight.w800),
+                      style: const TextStyle(fontWeight: FontWeight.w900),
                     ),
                     TextSpan(text: category.skills.join(', ')),
                   ],
@@ -249,34 +181,52 @@ class CvPreviewDocument extends StatelessWidget {
             const SizedBox(height: 12),
             ...resume.projects!.map((proj) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: RichText(
-                textAlign: TextAlign.justify,
-                text: TextSpan(
-                  style: const TextStyle(height: 1.5, color: Colors.black, fontSize: 14, fontFamily: 'Segoe UI'),
-                  children: [
-                    TextSpan(
-                      text: '${proj.name}: ',
-                      style: const TextStyle(fontWeight: FontWeight.w800),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    textAlign: TextAlign.justify,
+                    text: TextSpan(
+                      style: const TextStyle(height: 1.5, color: Colors.black, fontSize: 13, fontFamily: 'Segoe UI'),
+                      children: [
+                        TextSpan(
+                          text: '${proj.name.toUpperCase()}: ',
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                        TextSpan(text: proj.description),
+                      ],
                     ),
-                    TextSpan(text: proj.description),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    '${proj.technologies} | View profile',
+                    style: const TextStyle(fontSize: 12, fontStyle: FontStyle.italic, color: Colors.black54, fontFamily: 'Segoe UI'),
+                  ),
+                ],
               ),
             )),
           ],
+
+          // Languages Section
+          if (resume.languages != null && resume.languages!.isNotEmpty) ...[
+            const _SectionHeader('LANGUAGES'),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 16,
+              runSpacing: 8,
+              children: resume.languages!.map((lang) => RichText(
+                text: TextSpan(
+                  style: const TextStyle(color: Colors.black, fontSize: 13, fontFamily: 'Segoe UI'),
+                  children: [
+                    TextSpan(text: lang.name, style: const TextStyle(fontWeight: FontWeight.w900)),
+                    TextSpan(text: ' (${lang.level})'),
+                  ],
+                ),
+              )).toList(),
+            ),
+          ],
         ],
       ),
-    );
-  }
-}
-
-class _Separator extends StatelessWidget {
-  const _Separator();
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10),
-      child: Text('|', style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.w400)),
     );
   }
 }

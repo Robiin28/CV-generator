@@ -38,20 +38,9 @@ class PdfService {
                       ),
                     ),
                   pw.SizedBox(height: 8),
-                  pw.Row(
-                    mainAxisAlignment: pw.MainAxisAlignment.center,
-                    children: [
-                      if (resume.personalInfo.phone.isNotEmpty) ...[
-                        pw.Text('Phone: ${resume.personalInfo.phone}', style: const pw.TextStyle(fontSize: 10)),
-                        _separator(),
-                      ],
-                      if (resume.personalInfo.email.isNotEmpty) ...[
-                        pw.Text('Email: ${resume.personalInfo.email}', style: const pw.TextStyle(fontSize: 10)),
-                        _separator(),
-                      ],
-                      if (resume.personalInfo.location.isNotEmpty)
-                        pw.Text('Location: ${resume.personalInfo.location}', style: const pw.TextStyle(fontSize: 10)),
-                    ],
+                  pw.Text(
+                    '${resume.personalInfo.phone}  |  ${resume.personalInfo.email}  |  ${resume.personalInfo.location}  |  ${resume.personalInfo.linkedin ?? ""}',
+                    style: const pw.TextStyle(fontSize: 10),
                   ),
                 ],
               ),
@@ -84,15 +73,30 @@ class PdfService {
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13),
                     ),
                     pw.Text(
-                      '${exp.company} | ${exp.startDate} – ${exp.endDate}',
+                      '${exp.company} | ${exp.location} | ${exp.startDate} – ${exp.endDate}',
                       style: pw.TextStyle(fontStyle: pw.FontStyle.italic, fontSize: 11),
                     ),
                     pw.SizedBox(height: 4),
-                    pw.Text(
-                      exp.description,
-                      textAlign: pw.TextAlign.justify,
-                      style: const pw.TextStyle(fontSize: 11),
-                    ),
+                    ...exp.description.split('\n').map((bullet) {
+                      final text = bullet.trim();
+                      if (text.isEmpty) return pw.SizedBox.shrink();
+                      return pw.Padding(
+                        padding: const pw.EdgeInsets.only(bottom: 2),
+                        child: pw.Row(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text('• ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                            pw.Expanded(
+                              child: pw.Text(
+                                text.replaceFirst('•', '').trim(),
+                                textAlign: pw.TextAlign.justify,
+                                style: const pw.TextStyle(fontSize: 11),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
                 ),
               )),
@@ -108,12 +112,57 @@ class PdfService {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                      '${edu.degree} ${edu.fieldOfStudy ?? ""}'.toUpperCase(),
+                      '${edu.degree} ${edu.fieldOfStudy}'.toUpperCase(),
                       style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 13),
                     ),
                     pw.Text(
                       '${edu.school} | ${edu.startDate} – ${edu.endDate}',
                       style: const pw.TextStyle(fontSize: 11),
+                    ),
+                  ],
+                ),
+              )),
+            ],
+
+            // Skills
+            if (resume.skills.isNotEmpty) ...[
+              _sectionHeader('SKILLS AND LANGUAGES'),
+              pw.SizedBox(height: 10),
+              ...resume.skills.map((cat) => pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 4),
+                child: pw.RichText(
+                  text: pw.TextSpan(
+                    style: const pw.TextStyle(fontSize: 11),
+                    children: [
+                      pw.TextSpan(text: '${cat.category}: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                      pw.TextSpan(text: cat.skills.join(', ')),
+                    ],
+                  ),
+                ),
+              )),
+            ],
+
+            // Projects
+            if (resume.projects != null && resume.projects!.isNotEmpty) ...[
+              _sectionHeader('PROJECTS & PUBLICATIONS'),
+              pw.SizedBox(height: 10),
+              ...resume.projects!.map((proj) => pw.Padding(
+                padding: const pw.EdgeInsets.only(bottom: 8),
+                child: pw.Column(
+                  crossAxisAlignment: pw.CrossAxisAlignment.start,
+                  children: [
+                    pw.RichText(
+                      text: pw.TextSpan(
+                        style: const pw.TextStyle(fontSize: 11),
+                        children: [
+                          pw.TextSpan(text: '${proj.name.toUpperCase()}: ', style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
+                          pw.TextSpan(text: proj.description),
+                        ],
+                      ),
+                    ),
+                    pw.Text(
+                      '${proj.technologies} | View profile',
+                      style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700),
                     ),
                   ],
                 ),
@@ -130,30 +179,26 @@ class PdfService {
     );
   }
 
-  static pw.Widget _separator() {
-    return pw.Padding(
-      padding: const pw.EdgeInsets.symmetric(horizontal: 8),
-      child: pw.Text('|', style: const pw.TextStyle(fontSize: 10)),
-    );
-  }
-
   static pw.Widget _sectionHeader(String title) {
-    return pw.Row(
-      children: [
-        pw.Expanded(child: pw.Divider(thickness: 2, color: PdfColors.black)),
-        pw.Padding(
-          padding: const pw.EdgeInsets.symmetric(horizontal: 16),
-          child: pw.Text(
-            title,
-            style: pw.TextStyle(
-              fontSize: 14,
-              fontWeight: pw.FontWeight.bold,
-              letterSpacing: 1,
+    return pw.Padding(
+      padding: const pw.EdgeInsets.only(top: 16, bottom: 8),
+      child: pw.Row(
+        children: [
+          pw.Expanded(child: pw.Divider(thickness: 2, color: PdfColors.black)),
+          pw.Padding(
+            padding: const pw.EdgeInsets.symmetric(horizontal: 16),
+            child: pw.Text(
+              title,
+              style: pw.TextStyle(
+                fontSize: 14,
+                fontWeight: pw.FontWeight.bold,
+                letterSpacing: 1,
+              ),
             ),
           ),
-        ),
-        pw.Expanded(child: pw.Divider(thickness: 2, color: PdfColors.black)),
-      ],
+          pw.Expanded(child: pw.Divider(thickness: 2, color: PdfColors.black)),
+        ],
+      ),
     );
   }
 }
