@@ -138,6 +138,13 @@ class ProjectsForm extends StatelessWidget {
                       newList[index] = newList[index].copyWith(description: val);
                       context.read<ResumeService>().updateProjects(newList);
                     }, maxLines: 3),
+                    const SizedBox(height: 20),
+                    _buildInputField(context, 'View Profile Link (e.g. LinkedIn URL)', project.link ?? '', (val) {
+                      final current = context.read<ResumeService>().currentResume?.projects ?? [];
+                      final newList = List<Project>.from(current);
+                      newList[index] = newList[index].copyWith(link: val);
+                      context.read<ResumeService>().updateProjects(newList);
+                    }),
                   ],
                 ),
               ),

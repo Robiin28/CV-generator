@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../core/services/resume_service.dart';
-import '../../../core/models/resume_model.dart';
 
 class CvPreviewDocument extends StatelessWidget {
   const CvPreviewDocument({super.key});
@@ -13,7 +13,6 @@ class CvPreviewDocument extends StatelessWidget {
 
     // Website Brand Colors
     const Color primaryNavy = Color(0xFF0A2540);
-    const Color linkColor = Color(0xFF2563EB);
     const Color darkText = Color(0xFF1A1A1A);
 
     return Container(
@@ -23,7 +22,7 @@ class CvPreviewDocument extends StatelessWidget {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 30,
             spreadRadius: 10,
           ),
@@ -77,6 +76,10 @@ class CvPreviewDocument extends StatelessWidget {
                     if (resume.personalInfo.linkedin != null && resume.personalInfo.linkedin!.isNotEmpty) ...[
                       _sep(),
                       _contactItem('LinkedIn:', resume.personalInfo.linkedin!, isLink: true),
+                    ],
+                    if (resume.personalInfo.website != null && resume.personalInfo.website!.isNotEmpty) ...[
+                      _sep(),
+                      _contactItem('Portfolio:', resume.personalInfo.website!, isLink: true),
                     ],
                   ],
                 ),
@@ -162,7 +165,7 @@ class CvPreviewDocument extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${edu.degree}${edu.fieldOfStudy.isNotEmpty ? " " + edu.fieldOfStudy : ""}'.toUpperCase(), 
+                    '${edu.degree}${edu.fieldOfStudy.isNotEmpty ? " ${edu.fieldOfStudy}" : ""}'.toUpperCase(), 
                     style: const TextStyle(fontWeight: FontWeight.w800, color: darkText, fontSize: 15, fontFamily: 'Segoe UI'),
                   ),
                   const SizedBox(height: 2),
@@ -177,7 +180,7 @@ class CvPreviewDocument extends StatelessWidget {
 
           // SKILLS & LANGUAGES
           if (resume.skills.isNotEmpty) ...[
-            _SectionHeader('SKILLS AND LANGUAGES', color: primaryNavy),
+            _SectionHeader('SKILLS', color: primaryNavy),
             const SizedBox(height: 12),
             ...resume.skills.map((category) => Padding(
               padding: const EdgeInsets.only(bottom: 8),
@@ -203,26 +206,79 @@ class CvPreviewDocument extends StatelessWidget {
 
           // PROJECTS
           if (resume.projects != null && resume.projects!.isNotEmpty) ...[
-            _SectionHeader('PROJECTS & PUBLICATIONS', color: primaryNavy),
+            _SectionHeader('PROJECTS', color: primaryNavy),
             const SizedBox(height: 12),
             ...resume.projects!.map((proj) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: RichText(
-                textAlign: TextAlign.justify,
-                text: TextSpan(
-                  style: const TextStyle(height: 1.5, color: darkText, fontSize: 14, fontFamily: 'Segoe UI'),
-                  children: [
-                    TextSpan(
-                      text: '${proj.name}: ',
-                      style: const TextStyle(fontWeight: FontWeight.w800),
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Project name — bold uppercase like experience title
+                  Text(
+                    proj.name.toUpperCase(),
+                    style: const TextStyle(fontWeight: FontWeight.w800, color: darkText, fontSize: 15, fontFamily: 'Segoe UI'),
+                  ),
+                  const SizedBox(height: 2),
+                  // Technologies + optional clickable link
+                  RichText(
+                    text: TextSpan(
+                      style: const TextStyle(fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, color: darkText, fontSize: 14, fontFamily: 'Segoe UI'),
+                      children: [
+                        if (proj.technologies.isNotEmpty)
+                          TextSpan(text: proj.technologies),
+                        if (proj.link != null && proj.link!.isNotEmpty) ...[                          if (proj.technologies.isNotEmpty)
+                            const TextSpan(text: '  ·  '),
+                          WidgetSpan(
+                            alignment: PlaceholderAlignment.middle,
+                            child: GestureDetector(
+                              onTap: () => _launchURL(proj.link!),
+                              child: const Text(
+                                'View profile',
+                                style: TextStyle(
+                                  color: Color(0xFF2563EB),
+                                  decoration: TextDecoration.underline,
+                                  fontStyle: FontStyle.normal,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 14,
+                                  fontFamily: 'Segoe UI',
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ],
                     ),
-                    TextSpan(text: proj.description),
-                    const TextSpan(
-                      text: ' View profile',
-                      style: TextStyle(color: linkColor, decoration: TextDecoration.underline, fontSize: 13),
-                    ),
+                  ),
+                  // Description as bullet points
+                  if (proj.description.isNotEmpty) ...[
+                    const SizedBox(height: 8),
+                    ...proj.description.split('\n').map((bullet) {
+                      final text = bullet.trim();
+                      if (text.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 6, left: 4),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(top: 8, right: 10),
+                              width: 3,
+                              height: 3,
+                              decoration: const BoxDecoration(color: primaryNavy, shape: BoxShape.rectangle),
+                            ),
+                            Expanded(
+                              child: Text(
+                                text.replaceFirst('•', '').trim(),
+                                textAlign: TextAlign.justify,
+                                style: const TextStyle(height: 1.4, color: darkText, fontSize: 14, fontFamily: 'Segoe UI'),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }),
                   ],
-                ),
+                ],
               ),
             )),
           ],
@@ -254,24 +310,33 @@ class CvPreviewDocument extends StatelessWidget {
             _SectionHeader('VOLUNTEERING & ACTIVITIES', color: primaryNavy),
             const SizedBox(height: 12),
             ...resume.volunteering!.map((vol) => Padding(
-              padding: const EdgeInsets.only(bottom: 12),
+              padding: const EdgeInsets.only(bottom: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     vol.role.toUpperCase(), 
-                    style: const TextStyle(fontWeight: FontWeight.w800, color: darkText, fontSize: 14, fontFamily: 'Segoe UI'),
+                    style: const TextStyle(fontWeight: FontWeight.w800, color: darkText, fontSize: 15, fontFamily: 'Segoe UI'),
                   ),
+                  const SizedBox(height: 2),
                   Text(
-                    '${vol.organization} | ${vol.startDate} – ${vol.current ? "Present" : vol.endDate}', 
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, color: darkText, fontSize: 13, fontFamily: 'Segoe UI'),
+                    '${vol.organization} | ${vol.startDate} – ${vol.endDate}', 
+                    style: const TextStyle(fontWeight: FontWeight.w700, fontStyle: FontStyle.italic, color: darkText, fontSize: 14, fontFamily: 'Segoe UI'),
                   ),
                   if (vol.description.isNotEmpty) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      vol.description,
-                      style: const TextStyle(fontSize: 13, color: darkText, fontFamily: 'Segoe UI'),
-                    ),
+                    const SizedBox(height: 8),
+                    ...vol.description.split('\n').map((line) {
+                      final text = line.trim();
+                      if (text.isEmpty) return const SizedBox.shrink();
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 4),
+                        child: Text(
+                          text,
+                          textAlign: TextAlign.justify,
+                          style: const TextStyle(height: 1.4, color: darkText, fontSize: 14, fontFamily: 'Segoe UI'),
+                        ),
+                      );
+                    }),
                   ],
                 ],
               ),
@@ -283,7 +348,7 @@ class CvPreviewDocument extends StatelessWidget {
             _SectionHeader('LANGUAGES', color: primaryNavy),
             const SizedBox(height: 12),
             Wrap(
-              spacing: 16,
+              spacing: 24,
               runSpacing: 8,
               children: resume.languages!.map((lang) => RichText(
                 text: TextSpan(
@@ -303,22 +368,46 @@ class CvPreviewDocument extends StatelessWidget {
 
   Widget _contactItem(String label, String value, {bool isLink = false}) {
     if (value.isEmpty) return const SizedBox.shrink();
-    return RichText(
-      text: TextSpan(
-        style: const TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'Segoe UI'),
-        children: [
-          TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.w700)),
-          TextSpan(
-            text: value.replaceFirst('https://', '').replaceFirst('www.', ''),
-            style: TextStyle(
-              color: isLink ? const Color(0xFF2563EB) : Colors.black,
-              decoration: isLink ? TextDecoration.underline : TextDecoration.none,
-              fontWeight: isLink ? FontWeight.w500 : FontWeight.w400,
-            ),
+    final cleanValue = value.replaceFirst('https://', '').replaceFirst('http://', '').replaceFirst('www.', '');
+    
+    return MouseRegion(
+      cursor: isLink ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: GestureDetector(
+        onTap: isLink ? () => _launchURL(value) : null,
+        child: RichText(
+          text: TextSpan(
+            style: const TextStyle(fontSize: 13, color: Colors.black, fontFamily: 'Segoe UI'),
+            children: [
+              TextSpan(text: '$label ', style: const TextStyle(fontWeight: FontWeight.w700)),
+              TextSpan(
+                text: cleanValue,
+                style: TextStyle(
+                  color: isLink ? const Color(0xFF2563EB) : Colors.black,
+                  decoration: isLink ? TextDecoration.underline : TextDecoration.none,
+                  fontWeight: isLink ? FontWeight.w500 : FontWeight.w400,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
+  }
+
+  Future<void> _launchURL(String urlString) async {
+    if (urlString.isEmpty) return;
+    String finalUrl = urlString.trim();
+    if (!finalUrl.startsWith('http://') && !finalUrl.startsWith('https://')) {
+      finalUrl = 'https://$finalUrl';
+    }
+    try {
+      final Uri url = Uri.parse(finalUrl);
+      if (await canLaunchUrl(url)) {
+        await launchUrl(url, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      debugPrint('Could not launch $finalUrl: $e');
+    }
   }
 
   Widget _sep() {
@@ -341,7 +430,7 @@ class _SectionHeader extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(child: Divider(thickness: 2, color: color.withOpacity(0.8))),
+          Expanded(child: Divider(thickness: 2, color: color.withValues(alpha: 0.8))),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Text(
@@ -355,7 +444,7 @@ class _SectionHeader extends StatelessWidget {
               ),
             ),
           ),
-          Expanded(child: Divider(thickness: 2, color: color.withOpacity(0.8))),
+          Expanded(child: Divider(thickness: 2, color: color.withValues(alpha: 0.8))),
         ],
       ),
     );

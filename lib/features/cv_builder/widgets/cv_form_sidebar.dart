@@ -7,6 +7,7 @@ import 'projects_form.dart';
 import 'summary_form.dart';
 import 'certifications_form.dart';
 import 'volunteering_form.dart';
+import 'languages_form.dart';
 
 class CvFormSidebar extends StatefulWidget {
   const CvFormSidebar({super.key});
@@ -26,6 +27,7 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
     {'title': 'Education', 'icon': Icons.school_outlined, 'form': const EducationForm()},
     {'title': 'Skills', 'icon': Icons.psychology_outlined, 'form': const SkillsForm()},
     {'title': 'Projects', 'icon': Icons.code_outlined, 'form': const ProjectsForm()},
+    {'title': 'Languages', 'icon': Icons.language_outlined, 'form': const LanguagesForm()},
     {'title': 'Certifications', 'icon': Icons.verified_outlined, 'form': const CertificationsForm()},
     {'title': 'Volunteering', 'icon': Icons.volunteer_activism_outlined, 'form': const VolunteeringForm()},
   ];
@@ -64,7 +66,7 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                         width: 90,
                         decoration: BoxDecoration(
                           color: isSelected 
-                            ? (isDark ? Colors.blueAccent.withOpacity(0.1) : const Color(0xFF0A2540).withOpacity(0.05))
+                            ? (isDark ? Colors.blueAccent.withValues(alpha: 0.1) : const Color(0xFF0A2540).withValues(alpha: 0.05))
                             : Colors.transparent,
                           border: Border.all(
                             color: isSelected ? (isDark ? Colors.blueAccent : const Color(0xFF0A2540)) : (isDark ? Colors.white10 : Colors.grey.shade200),
@@ -107,7 +109,7 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
                     width: 40,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: [surfaceColor.withOpacity(0), surfaceColor],
+                        colors: [surfaceColor.withValues(alpha: 0), surfaceColor],
                         begin: Alignment.centerLeft,
                         end: Alignment.centerRight,
                       ),

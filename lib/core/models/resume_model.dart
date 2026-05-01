@@ -99,6 +99,56 @@ class Resume {
       additionalInfo: additionalInfo ?? this.additionalInfo,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'personalInfo': personalInfo.toJson(),
+    'summary': summary,
+    'experience': experience.map((e) => e.toJson()).toList(),
+    'education': education.map((e) => e.toJson()).toList(),
+    'skills': skills.map((e) => e.toJson()).toList(),
+    'projects': projects?.map((e) => e.toJson()).toList(),
+    'languages': languages?.map((e) => e.toJson()).toList(),
+    'certifications': certifications?.map((e) => e.toJson()).toList(),
+    'volunteering': volunteering?.map((e) => e.toJson()).toList(),
+    'customSections': customSections?.map((e) => e.toJson()).toList(),
+    'atsScore': atsScore,
+    'lastUpdated': lastUpdated.toIso8601String(),
+    'nationality': nationality,
+    'dateOfBirth': dateOfBirth,
+    'motherTongues': motherTongues,
+    'cefrLanguages': cefrLanguages?.map((e) => e.toJson()).toList(),
+    'communicationSkills': communicationSkills,
+    'organisationalSkills': organisationalSkills,
+    'jobRelatedSkills': jobRelatedSkills,
+    'additionalInfo': additionalInfo,
+  };
+
+  factory Resume.fromJson(Map<String, dynamic> json) => Resume(
+    id: json['id'],
+    title: json['title'],
+    personalInfo: PersonalInfo.fromJson(json['personalInfo']),
+    summary: json['summary'],
+    experience: (json['experience'] as List).map((e) => Experience.fromJson(e)).toList(),
+    education: (json['education'] as List).map((e) => Education.fromJson(e)).toList(),
+    skills: (json['skills'] as List).map((e) => SkillCategory.fromJson(e)).toList(),
+    projects: json['projects'] != null ? (json['projects'] as List).map((e) => Project.fromJson(e)).toList() : null,
+    languages: json['languages'] != null ? (json['languages'] as List).map((e) => Language.fromJson(e)).toList() : null,
+    certifications: json['certifications'] != null ? (json['certifications'] as List).map((e) => Certification.fromJson(e)).toList() : null,
+    volunteering: json['volunteering'] != null ? (json['volunteering'] as List).map((e) => Volunteering.fromJson(e)).toList() : null,
+    customSections: json['customSections'] != null ? (json['customSections'] as List).map((e) => CustomSection.fromJson(e)).toList() : null,
+    atsScore: json['atsScore'],
+    lastUpdated: DateTime.parse(json['lastUpdated']),
+    nationality: json['nationality'],
+    dateOfBirth: json['dateOfBirth'],
+    motherTongues: json['motherTongues'] != null ? List<String>.from(json['motherTongues']) : null,
+    cefrLanguages: json['cefrLanguages'] != null ? (json['cefrLanguages'] as List).map((e) => CEFRLanguage.fromJson(e)).toList() : null,
+    communicationSkills: json['communicationSkills'],
+    organisationalSkills: json['organisationalSkills'],
+    jobRelatedSkills: json['jobRelatedSkills'],
+    additionalInfo: json['additionalInfo'],
+  );
 }
 
 class CustomSection {
@@ -107,13 +157,23 @@ class CustomSection {
   final List<CustomField> items;
 
   CustomSection({required this.id, required this.title, required this.items});
+
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'items': items.map((e) => e.toJson()).toList()};
+  factory CustomSection.fromJson(Map<String, dynamic> json) => CustomSection(
+    id: json['id'],
+    title: json['title'],
+    items: (json['items'] as List).map((e) => CustomField.fromJson(e)).toList(),
+  );
 }
 
 class CustomField {
   final String label;
   final String value;
 
- CustomField({required this.label, required this.value});
+  CustomField({required this.label, required this.value});
+
+  Map<String, dynamic> toJson() => {'label': label, 'value': value};
+  factory CustomField.fromJson(Map<String, dynamic> json) => CustomField(label: json['label'], value: json['value']);
 }
 
 class PersonalInfo {
@@ -166,6 +226,32 @@ class PersonalInfo {
       customFields: customFields ?? this.customFields,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'fullName': fullName,
+    'email': email,
+    'phone': phone,
+    'location': location,
+    'jobTitle': jobTitle,
+    'photo': photo,
+    'website': website,
+    'linkedin': linkedin,
+    'github': github,
+    'customFields': customFields?.map((e) => e.toJson()).toList(),
+  };
+
+  factory PersonalInfo.fromJson(Map<String, dynamic> json) => PersonalInfo(
+    fullName: json['fullName'],
+    email: json['email'],
+    phone: json['phone'],
+    location: json['location'],
+    jobTitle: json['jobTitle'],
+    photo: json['photo'],
+    website: json['website'],
+    linkedin: json['linkedin'],
+    github: json['github'],
+    customFields: json['customFields'] != null ? (json['customFields'] as List).map((e) => CustomField.fromJson(e)).toList() : null,
+  );
 }
 
 class Experience {
@@ -213,6 +299,30 @@ class Experience {
       bullets: bullets ?? this.bullets,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'jobTitle': jobTitle,
+    'company': company,
+    'location': location,
+    'startDate': startDate,
+    'endDate': endDate,
+    'current': current,
+    'description': description,
+    'bullets': bullets,
+  };
+
+  factory Experience.fromJson(Map<String, dynamic> json) => Experience(
+    id: json['id'],
+    jobTitle: json['jobTitle'],
+    company: json['company'],
+    location: json['location'],
+    startDate: json['startDate'],
+    endDate: json['endDate'],
+    current: json['current'],
+    description: json['description'],
+    bullets: List<String>.from(json['bullets']),
+  );
 }
 
 class Education {
@@ -256,6 +366,28 @@ class Education {
       description: description ?? this.description,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'school': school,
+    'degree': degree,
+    'fieldOfStudy': fieldOfStudy,
+    'startDate': startDate,
+    'endDate': endDate,
+    'gpa': gpa,
+    'description': description,
+  };
+
+  factory Education.fromJson(Map<String, dynamic> json) => Education(
+    id: json['id'],
+    school: json['school'],
+    degree: json['degree'],
+    fieldOfStudy: json['fieldOfStudy'],
+    startDate: json['startDate'],
+    endDate: json['endDate'],
+    gpa: json['gpa'],
+    description: json['description'],
+  );
 }
 
 class SkillCategory {
@@ -272,6 +404,12 @@ class SkillCategory {
       skills: skills ?? this.skills,
     );
   }
+
+  Map<String, dynamic> toJson() => {'category': category, 'skills': skills};
+  factory SkillCategory.fromJson(Map<String, dynamic> json) => SkillCategory(
+    category: json['category'],
+    skills: List<String>.from(json['skills']),
+  );
 }
 
 class Project {
@@ -311,6 +449,26 @@ class Project {
       github: github ?? this.github,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'description': description,
+    'technologies': technologies,
+    'link': link,
+    'github': github,
+    'bullets': bullets,
+  };
+
+  factory Project.fromJson(Map<String, dynamic> json) => Project(
+    id: json['id'],
+    name: json['name'],
+    description: json['description'],
+    technologies: json['technologies'],
+    link: json['link'],
+    github: json['github'],
+    bullets: List<String>.from(json['bullets']),
+  );
 }
 
 class Certification {
@@ -342,6 +500,15 @@ class Certification {
       url: url ?? this.url,
     );
   }
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'issuer': issuer, 'date': date, 'url': url};
+  factory Certification.fromJson(Map<String, dynamic> json) => Certification(
+    id: json['id'],
+    name: json['name'],
+    issuer: json['issuer'],
+    date: json['date'],
+    url: json['url'],
+  );
 }
 
 class Language {
@@ -361,6 +528,9 @@ class Language {
       level: level ?? this.level,
     );
   }
+
+  Map<String, dynamic> toJson() => {'id': id, 'name': name, 'level': level};
+  factory Language.fromJson(Map<String, dynamic> json) => Language(id: json['id'], name: json['name'], level: json['level']);
 }
 
 class CEFRLanguage {
@@ -378,6 +548,24 @@ class CEFRLanguage {
     required this.spokenProduction,
     required this.writing,
   });
+
+  Map<String, dynamic> toJson() => {
+    'language': language,
+    'listening': listening,
+    'reading': reading,
+    'spokenInteraction': spokenInteraction,
+    'spokenProduction': spokenProduction,
+    'writing': writing,
+  };
+
+  factory CEFRLanguage.fromJson(Map<String, dynamic> json) => CEFRLanguage(
+    language: json['language'],
+    listening: json['listening'],
+    reading: json['reading'],
+    spokenInteraction: json['spokenInteraction'],
+    spokenProduction: json['spokenProduction'],
+    writing: json['writing'],
+  );
 }
 
 class Volunteering {
@@ -421,4 +609,26 @@ class Volunteering {
       description: description ?? this.description,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'role': role,
+    'organization': organization,
+    'location': location,
+    'startDate': startDate,
+    'endDate': endDate,
+    'current': current,
+    'description': description,
+  };
+
+  factory Volunteering.fromJson(Map<String, dynamic> json) => Volunteering(
+    id: json['id'],
+    role: json['role'],
+    organization: json['organization'],
+    location: json['location'],
+    startDate: json['startDate'],
+    endDate: json['endDate'],
+    current: json['current'],
+    description: json['description'],
+  );
 }

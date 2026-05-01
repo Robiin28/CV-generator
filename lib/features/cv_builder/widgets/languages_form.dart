@@ -46,7 +46,6 @@ class LanguagesForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final languagesCount = context.select<ResumeService, int>((s) => s.currentResume?.languages?.length ?? 0);
     final resumeService = context.read<ResumeService>();
     final languages = resumeService.currentResume?.languages ?? [];
 

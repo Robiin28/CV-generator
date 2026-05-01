@@ -177,6 +177,7 @@ class SkillsForm extends StatelessWidget {
                                 ],
                               ),
                             );
+                            if (!context.mounted) return;
 
                             if (skill != null && skill.isNotEmpty) {
                               final current = context.read<ResumeService>().currentResume?.skills ?? [];

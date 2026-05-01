@@ -69,7 +69,7 @@ class _CvBuilderScreenState extends State<CvBuilderScreen> {
       child: Container(
         height: 45,
         decoration: BoxDecoration(
-          color: isDark ? Colors.white.withOpacity(0.05) : const Color(0xFFF1F5F9),
+          color: isDark ? Colors.white.withValues(alpha: 0.05) : const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Row(
@@ -186,10 +186,15 @@ class _CvBuilderScreenState extends State<CvBuilderScreen> {
             ],
           ),
           ElevatedButton.icon(
-            onPressed: () {
-              final resume = context.read<ResumeService>().currentResume;
+            onPressed: () async {
+              final resumeService = context.read<ResumeService>();
+              final resume = resumeService.currentResume;
               if (resume != null) {
-                PdfService.generateAndDownload(resume);
+                await PdfService.generateAndDownload(resume);
+                await resumeService.showNotification(
+                  'Resume Exported!',
+                  'Your professional CV is ready and has been downloaded.',
+                );
               }
             },
             icon: const Icon(Icons.download_rounded, size: 18),

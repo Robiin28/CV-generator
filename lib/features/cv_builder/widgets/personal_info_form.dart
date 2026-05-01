@@ -38,7 +38,7 @@ class PersonalInfoForm extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               if (!isDark) BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 10,
                 offset: const Offset(0, 4),
               ),
@@ -98,7 +98,7 @@ class PersonalInfoForm extends StatelessWidget {
                 height: 90,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  border: Border.all(color: isDark ? Colors.blueAccent.withOpacity(0.3) : Colors.grey.shade200, width: 4),
+                  border: Border.all(color: isDark ? Colors.blueAccent.withValues(alpha: 0.3) : Colors.grey.shade200, width: 4),
                   color: isDark ? const Color(0xFF1E293B) : Colors.grey.shade50,
                 ),
                 child: Icon(Icons.person_outline, size: 45, color: isDark ? Colors.white24 : Colors.grey),
@@ -174,6 +174,13 @@ class PersonalInfoForm extends StatelessWidget {
                   final current = context.read<ResumeService>().currentResume!.personalInfo;
                   context.read<ResumeService>().updatePersonalInfo(current.copyWith(linkedin: val));
                 }, hint: 'Paste your full LinkedIn profile URL.'),
+              ),
+              SizedBox(
+                width: 300,
+                child: _buildInputField(context, 'Portfolio / Website', personalInfo.website ?? '', (val) {
+                  final current = context.read<ResumeService>().currentResume!.personalInfo;
+                  context.read<ResumeService>().updatePersonalInfo(current.copyWith(website: val));
+                }, hint: 'Optional: your portfolio or personal website URL.'),
               ),
             ],
           ),

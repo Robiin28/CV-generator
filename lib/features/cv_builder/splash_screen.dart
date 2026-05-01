@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'home_screen.dart';
-
+import 'onboarding_wizard_screen.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -31,11 +32,15 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
 
     _controller.forward();
 
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 3), () async {
+      final prefs = await SharedPreferences.getInstance();
+      final hasCompletedOnboarding = prefs.getBool('has_completed_onboarding') ?? false;
+
       if (mounted) {
         Navigator.of(context).pushReplacement(
           PageRouteBuilder(
-            pageBuilder: (context, animation, secondaryAnimation) => const HomeScreen(),
+            pageBuilder: (context, animation, secondaryAnimation) => 
+                hasCompletedOnboarding ? const HomeScreen() : const OnboardingWizardScreen(),
             transitionsBuilder: (context, animation, secondaryAnimation, child) {
               return FadeTransition(opacity: animation, child: child);
             },
@@ -75,23 +80,22 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
+                            color: Colors.blue.withValues(alpha: 0.3),
                             blurRadius: 40,
                             spreadRadius: 10,
                           ),
                         ],
                       ),
-                      child: const Center(
-                        child: Text(
-                          'RF',
-                          style: TextStyle(
-                            color: Color(0xFF0A2540),
-                            fontSize: 48,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: -2,
+                        child: const Center(
+                          child: Text(
+                            'F',
+                            style: TextStyle(
+                              color: Color(0xFF0A2540),
+                              fontSize: 56,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ),
-                      ),
                     ),
                     const SizedBox(height: 24),
                     const Text(
@@ -107,7 +111,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     Text(
                       'AI-Powered Career Building',
                       style: TextStyle(
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                         fontSize: 16,
                         letterSpacing: 1.2,
                       ),
@@ -116,7 +120,7 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     SizedBox(
                       width: 200,
                       child: LinearProgressIndicator(
-                        backgroundColor: Colors.white.withOpacity(0.1),
+                        backgroundColor: Colors.white.withValues(alpha: 0.1),
                         valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
                         borderRadius: BorderRadius.circular(10),
                       ),

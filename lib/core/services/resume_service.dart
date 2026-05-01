@@ -1,23 +1,99 @@
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../models/resume_model.dart';
 
 class ResumeService extends ChangeNotifier {
   Resume? _currentResume;
+  static const String _storageKey = 'saved_resume_data';
+  
+  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
   Resume? get currentResume => _currentResume;
 
   ResumeService() {
     _currentResume = _createDummyResume();
+    _init();
+  }
+
+  Future<void> _init() async {
+    try {
+      await _initNotifications();
+    } catch (e) {
+      debugPrint('Notification init failed: $e');
+    }
+    await _loadFromStorage();
+  }
+
+  Future<void> _initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid = AndroidInitializationSettings('launcher_icon');
+    const InitializationSettings initializationSettings = InitializationSettings(android: initializationSettingsAndroid);
+    await _notifications.initialize(initializationSettings);
+  }
+
+  Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = AndroidNotificationDetails(
+      'resume_forge_id',
+      'ResumeForge Notifications',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(android: androidPlatformChannelSpecifics);
+    await _notifications.show(0, title, body, platformChannelSpecifics);
+  }
+
+  Future<void> _loadFromStorage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      
+      // TEMPORARY: Clear preferences to reset user state after a corrupted build
+      // await prefs.clear(); 
+
+      final savedData = prefs.getString(_storageKey);
+      
+      if (savedData != null) {
+        final Map<String, dynamic> json = jsonDecode(savedData);
+        final loadedResume = Resume.fromJson(json);
+        
+        // Validation check to prevent loading a completely empty resume
+        if (loadedResume.personalInfo.fullName.isEmpty && loadedResume.experience.isEmpty) {
+          _currentResume = _createDummyResume();
+        } else {
+          _currentResume = loadedResume;
+        }
+      } else {
+        _currentResume = _createDummyResume();
+      }
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error loading resume: $e');
+      _currentResume = _createDummyResume();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _saveToStorage() async {
+    if (_currentResume == null) return;
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = jsonEncode(_currentResume!.toJson());
+      await prefs.setString(_storageKey, jsonStr);
+    } catch (e) {
+      debugPrint('Error saving resume: $e');
+    }
   }
 
   void updateResume(Resume newResume) {
     _currentResume = newResume;
+    _saveToStorage();
     notifyListeners();
   }
 
   void updatePersonalInfo(PersonalInfo newInfo) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(personalInfo: newInfo, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -25,6 +101,7 @@ class ResumeService extends ChangeNotifier {
   void updateSummary(String newSummary) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(summary: newSummary, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -32,6 +109,7 @@ class ResumeService extends ChangeNotifier {
   void updateExperience(List<Experience> newExperience) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(experience: newExperience, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -39,6 +117,7 @@ class ResumeService extends ChangeNotifier {
   void updateEducation(List<Education> newEducation) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(education: newEducation, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -46,6 +125,7 @@ class ResumeService extends ChangeNotifier {
   void updateSkills(List<SkillCategory> newSkills) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(skills: newSkills, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -53,6 +133,7 @@ class ResumeService extends ChangeNotifier {
   void updateProjects(List<Project> newProjects) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(projects: newProjects, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -60,6 +141,7 @@ class ResumeService extends ChangeNotifier {
   void updateLanguages(List<Language> newLanguages) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(languages: newLanguages, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -67,6 +149,7 @@ class ResumeService extends ChangeNotifier {
   void updateCertifications(List<Certification> newCertifications) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(certifications: newCertifications, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -74,6 +157,7 @@ class ResumeService extends ChangeNotifier {
   void updateVolunteering(List<Volunteering> newVolunteering) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(volunteering: newVolunteering, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
@@ -81,179 +165,154 @@ class ResumeService extends ChangeNotifier {
   void updateCustomSections(List<CustomSection> newSections) {
     if (_currentResume != null) {
       _currentResume = _currentResume!.copyWith(customSections: newSections, lastUpdated: DateTime.now());
+      _saveToStorage();
       notifyListeners();
     }
   }
 
   Resume _createDummyResume() {
     return Resume(
-      id: 'resume-mekdim-02',
-      title: 'Mekdim Hailu Legesse CV',
+      id: 'resume-robel-01',
+      title: 'Robel Hailu Woldesenebet CV',
       personalInfo: PersonalInfo(
-        fullName: 'MEKDIM HAILU LEGESSE',
-        email: 'mekdimhailu@gmail.com',
-        phone: '+44 xxxxxxxxx',
-        location: 'London, UK',
-        jobTitle: 'COMMUNICATIONS & CAMPAIGNS SPECIALIST | DEVELOPMENT & MEDIA EXPERT',
-        linkedin: 'linkedin.com/in/mekdimhailu',
-        website: 'Selected writing works available here.',
+        fullName: 'ROBEL HAILU WOLDESENEBET',
+        email: 'robiiihailuu@gmail.com',
+        phone: '+251986991447',
+        location: 'Ethiopia, Adiss Ababa',
+        jobTitle: 'FULL STACK ENGINEER & DATA ANALYST | PLATFORM DEVELOPMENT & ERP IMPLEMENTATION SPECIALIST',
+        linkedin: 'linkedin.com/in/mr-robel-hailu-854143239/',
+        website: '',
         github: '',
         customFields: [],
       ),
-      summary: 'Versatile communications professional and Chevening Scholar with over 8 years’ experience in strategic communications, content creation, campaign management, and stakeholder engagement across international NGOs, development projects, and media sectors. Skilled in content creation, stakeholder engagement, and campaign management, with a passion for using storytelling to drive social change and amplify marginalized voices.',
+      summary: 'Versatile Full Stack Engineer with strong experience spanning full stack development and data analysis, along with ERP implementation, platform administration, and data management in fintech environments. Skilled in building and maintaining end-to-end applications across frontend and backend systems while leveraging data to improve system performance, ensure data integrity, and support informed decision-making. Experienced in managing and processing financial and operational data within fintech systems, integrating ERP solutions, and supporting reliable platform operations. Focused on delivering scalable, secure, and efficient technology solutions that align engineering, data, and business processes.',
       experience: [
         Experience(
-          id: 'exp-psi',
-          jobTitle: 'COMMUNICATIONS MANAGER',
-          company: 'PSI Ethiopia – USAID Transform WASH Activity',
+          id: 'exp-1',
+          jobTitle: 'SENIOR PLATFORM ADMINISTRATOR',
+          company: 'Kifiya Financial Technology',
+          location: 'Addis Ababa, Ethiopia',
+          startDate: 'Jan 2026',
+          endDate: 'Present',
+          current: true,
+          description: 'Hired as a Senior Platform Administrator with active involvement in platform development and system management within a large-scale fintech environment handling high-volume loan operations and participant data\nWork directly with NGOs, financial institutions, and bank partners as clients, managing large-scale participant and loan taker datasets as part of end-to-end system operations\nAct as a developer and system interpreter, bridging technical implementation with client and stakeholder requirements to ensure accurate and reliable platform delivery\nTake direct responsibility for data-related operations, ensuring integrity, consistency, and proper handling of large-scale loan and financial datasets across the platform\nCollaborate with multiple banks and financial partners to support loan processing workflows, contributing to systems that have enabled over 6B+ in loan disbursement through platform and data infrastructure support\nContribute to platform development and improvement by aligning business requirements with technical solutions and ensuring scalable system performance in production environments\nMonitor and support platform operations to ensure continuous availability, reliability, and smooth execution of financial workflows.',
+          bullets: [],
+        ),
+        Experience(
+          id: 'exp-2',
+          jobTitle: 'DATA ANALYST & JUNIOR ERP CONSULTANT',
+          company: 'ESIG Ethiopia sugar company',
+          location: 'Addis Ababa, Ethiopia',
+          startDate: 'Jul 2025',
+          endDate: 'Jan 2026',
+          current: false,
+          description: 'Worked as a Data Analyst and ERP Consultant, acting as a key bridge between development teams, stakeholders, and consultancy representatives to ensure accurate requirement gathering and successful ERP system delivery\nConducted requirement elicitation sessions with stakeholders and requirement teams, translating business processes into structured technical specifications for developers\nVisited operational sites and real-world factory environments to observe actual workflows, understand business processes, and accurately map them into ERP system requirements\nAnalyzed, cleaned, and structured operational and business data to ensure readiness for ERP integration, reporting, and system configuration\nCollaborated closely with stakeholders, consultants, and developers to validate requirements, clarify business logic, and ensure alignment between real operations and system design\nPrepared datasets and business rules for ERP implementation, ensuring accuracy, consistency, and compliance with operational workflows before system deployment\nContributed to improving process efficiency by identifying gaps between field operations and system design, helping optimize ERP workflows and usability.',
+          bullets: [],
+        ),
+        Experience(
+          id: 'exp-3',
+          jobTitle: 'SOFTWARE DEVELOPER INTERN',
+          company: 'BM Technology',
+          location: 'Addis Ababa, Ethiopia',
+          startDate: 'Mar 2024',
+          endDate: 'Sep 2024',
+          current: false,
+          description: 'Joined as a Software Developer Intern and worked closely with senior developers, gaining hands-on experience in full stack development while contributing to real-world system development and improvements\nWorked on the BEFA Finance project, a system designed based on standard accounting principles, supporting structured financial data processing and reporting workflows\nContributed to both frontend and backend development of web applications, strengthening practical skills in building scalable and maintainable systems\nGained exposure to financial system workflows including accounting structures, data processing, and secure handling of financial information\nParticipated in Agile development processes including sprint planning, daily standups, and code reviews, improving collaboration and delivery practices\nContributed to bug fixing, feature implementation, and system testing while learning clean code practices, version control, and system security fundamentals.',
+          bullets: [],
+        ),
+        Experience(
+          id: 'exp-4',
+          jobTitle: 'SENIOR FULLSTACK DEVELOPER (REMOTE)',
+          company: 'elisoft Technology',
           location: 'Addis Ababa, Ethiopia',
           startDate: 'Feb 2023',
-          endDate: 'Mar 2024',
-          current: false,
-          description: 'Developed and implemented 8+ communications strategies across digital, print, and event platforms.\nAuthored 10+ case stories and articles, drawing on direct field visits and stakeholder interviews.\nCollaborated with government ministries and technical working groups to align communications with national strategies.\nServed as Chairperson for the National SBC Alliance, representing PSI Ethiopia in national coordination efforts alongside BBC Media Action and the Ministry of Health.',
-          bullets: [],
-        ),
-        Experience(
-          id: 'exp-ge',
-          jobTitle: 'COVAX MEDIA MANAGER',
-          company: 'Girl Effect (Seconded to Ethiopian Ministry of Health)',
-          location: 'Addis Ababa, Ethiopia',
-          startDate: 'Nov 2022',
-          endDate: 'Jan 2023',
-          current: false,
-          description: 'Designed 5+ media strategies and KPIs to enhance COVID-19 vaccination uptake.\nFacilitated public listening sessions, collecting 200+ community feedback responses to inform messaging.\nCreated advocacy videos, success stories, and infographics to support immunization campaigns.\nWorked directly with the Ministry of Health’s Expanded Programme on Immunization and PR teams.',
-          bullets: [],
-        ),
-        Experience(
-          id: 'exp-wa',
-          jobTitle: 'COMMUNICATIONS & CAMPAIGNS SPECIALIST',
-          company: 'WaterAid Ethiopia',
-          location: 'Addis Ababa, Ethiopia',
-          startDate: 'Jul 2021',
-          endDate: 'Nov 2022',
-          current: false,
-          description: 'Developed press releases, social media content, and articles, enhancing WaterAid’s visibility to thousands.\nDocumented lessons from 20+ projects, disseminating insights through publications, webinars, and workshops.\nManaged WaterAid Ethiopia’s presence at Dereja Annual Career Expo, connecting with 1,300+ youth, collecting 450+ CVs, and growing WaterAid’s newsletter subscriber base by 50+.\nSpearheaded the production of a climate change documentary aligned with WaterAid’s COP27 advocacy campaign.\nProject lead for the development and relaunch of WaterAid Ethiopia’s website.\nServed as Chief Editor, reviving and publishing WaterAid Ethiopia’s newsletter, contributing articles to regional editions.',
-          bullets: [],
-        ),
-        Experience(
-          id: 'exp-wkw',
-          jobTitle: 'CONTENT DEVELOPMENT LEAD',
-          company: 'Whiz Kids Workshop',
-          location: 'Addis Ababa, Ethiopia',
-          startDate: 'Oct 2019',
-          endDate: 'Jun 2021',
-          current: false,
-          description: 'Managed creative development for 10+ donor-funded projects (USAID, World Bank, Deutsche Welle).\nWrote and reviewed 30+ educational scripts, ensuring cultural relevance and audience alignment.\nProject Lead for Easy Read UN Convention (Amharic), managing designers, animators, and disability experts to produce accessible materials.',
-          bullets: [],
-        ),
-        Experience(
-          id: 'exp-kana',
-          jobTitle: 'SCRIPTWRITER & TRANSLATOR',
-          company: 'BeMedia / Kana TV',
-          location: 'Addis Ababa, Ethiopia',
-          startDate: 'Jul 2016',
-          endDate: 'Oct 2019',
-          current: false,
-          description: 'Wrote and edited 10+ scripts for the Yegna TV drama series, produced by Girl Effect and aimed at empowering Ethiopian girls.\nTranslated and edited 100+ final scripts, ensuring cultural and editorial accuracy.\nCollaborated with directors and producers in 20+ creative planning sessions to enhance storytelling.',
+          endDate: 'Present',
+          current: true,
+          description: 'joined as a Junior Full Stack Engineer and progressed to senior-level responsibilities through continuous development and project delivery while working remotely alongside university studies\nDeveloped and maintained full stack applications, working across frontend and backend systems to build scalable and reliable software solutions\nWorked extensively on ERP-related systems as part of larger platform development, contributing to modules such as Inventory Management, Human Resources (HR), and core business workflows\nIntegrated ERP systems with external platforms such as POS (Point of Sale), ensuring smooth data flow and system interoperability\nContributed to database design, API development, and system optimization across production environments\nSupported platform reliability and feature delivery through debugging, enhancements, and continuous improvements',
           bullets: [],
         ),
       ],
       education: [
         Education(
-          id: 'edu-lse',
-          school: 'London School of Economics',
+          id: 'edu-1',
+          school: 'Addis Ababa University',
           degree: 'MSc',
-          fieldOfStudy: 'Media, Communication & Development',
-          startDate: '2024',
-          endDate: 'Present',
-          description: 'Focused on strategic communication and the role of media in influencing public discourse and development outcomes.',
+          fieldOfStudy: 'Data Analysis',
+          startDate: 'Jan 2026',
+          endDate: '2029 (on going)',
+          description: 'In progress',
         ),
         Education(
-          id: 'edu-ngu',
-          school: 'New Generation University',
-          degree: 'MA',
-          fieldOfStudy: 'Global Studies & International Relations',
-          startDate: '2022',
-          endDate: '2024',
-          description: 'Specialized in global diplomacy, international relations, and cross-cultural communication.',
-        ),
-        Education(
-          id: 'edu-haw',
-          school: 'Hawassa University',
-          degree: 'BA',
-          fieldOfStudy: 'Psychology',
-          startDate: '2012',
-          endDate: '2015',
-          description: 'Built strong analytical and research skills with a focus on human behavior and social psychology.',
+          id: 'edu-2',
+          school: 'Arbaminch University Ethiopia',
+          degree: 'BSc',
+          fieldOfStudy: 'Global Software Engineering Studies & International Relations',
+          startDate: '2021',
+          endDate: '2025',
+          description: '',
         ),
       ],
       skills: [
         SkillCategory(
-          category: 'Expertise',
-          skills: [
-            'Strategic Communications & Campaigns',
-            'Content Creation & Copywriting',
-            'Stakeholder Engagement & Partnerships',
-            'Media Relations & Public Relations',
-            'Social Media & Digital Marketing',
-            'Documentation & Reporting',
-          ],
-        )
+          category: 'TECHNICAL SKILLS',
+          skills: ['Full Stack Development (Frontend & Backend)', 'API Development & Integration (REST APIs)', 'ERP System Development & Implementation'],
+        ),
+        SkillCategory(
+          category: 'DATA & PLATFORM SKILLS',
+          skills: ['Data Analysis & Data Processing', 'Data Cleaning & Validation', 'Data Management (Large-scale financial datasets)', 'Reporting & Dashboarding (Excel/Metabase / Power BI)', 'Operational Data Monitoring', 'Data Integrity Management'],
+        ),
+        SkillCategory(
+          category: 'PLATFORM & INFRASTRUCTURE SKILLS',
+          skills: ['Platform Administration', 'System Monitoring & Incident Handling', 'Basic CI/CD Understanding', 'Production System Support'],
+        ),
+        SkillCategory(
+          category: 'SOFT / PROFESSIONAL SKILLS',
+          skills: ['Stakeholder Management', 'Requirement Elicitation', 'Client Communication (NGOs, Banks, Partners)', 'Team Coordination', 'Decision Support through Data', 'Analytical Thinking', 'Fintech Experience', 'High-volume Data Operations'],
+        ),
       ],
       projects: [
         Project(
-          id: 'pub-irc',
-          name: 'IRC WASH Contributor Profile',
-          description: 'Published 5 stories focused on water, sanitation, and hygiene, highlighting community impact and sector innovations.',
-          technologies: 'WASH Sector',
+          id: 'proj-1',
+          name: 'FINTECH LOAN MANAGEMENT PLATFORM',
+          description: 'Contributed to a large-scale loan management platform handling high-volume loan processing and participant data across multiple financial institutions. Worked on backend services, API development, and system features to support loan lifecycle workflows and platform scalability. Acted as a middleware data interpreter between NGOs, banks, and Kifiya systems translating business requirements into technical implementation for development teams. Supported system integration across external banking systems and internal platform services to ensure accurate and consistent data flow. Managed and validated loan-related data across systems ensuring data integrity, consistency, and alignment with business rules. Participated in platform enhancement and debugging activities improving system reliability and performance in production environments.',
+          technologies: 'Node.js, Next.js, Go (Golang), Microservices Architecture, PostgreSQL, Redis, Kafka, AWS, CI/CD, REST APIs',
+          link: 'https://linkedin.com/in/mr-robel-hailu-854143239/',
           bullets: [],
         ),
         Project(
-          id: 'pub-avessa',
-          name: 'Avessa Magazine Contributor Profile',
-          description: 'Published 5 articles covering social issues, personal reflections, and global development themes.',
-          technologies: 'Editorial',
+          id: 'proj-2',
+          name: 'ERP SYSTEM DEVELOPMENT (HR, FINANCE, INVENTORY MODULES)',
+          description: 'Designed and contributed to core ERP modules supporting business operations including HR, finance, and inventory management. Developed backend logic, database structures, and API integrations to ensure smooth workflow automation across enterprise processes. Improved system usability and performance through continuous feature enhancements and bug fixing.',
+          technologies: 'Laravel, Filament, CodeIgniter, Node.js, MySQL, PostgreSQL, REST APIs, ERP Systems, Database Design',
+          link: 'https://linkedin.com/in/mr-robel-hailu-854143239/',
           bullets: [],
         ),
         Project(
-          id: 'pub-linkedin',
-          name: 'Yours Sincerely: Bi-weekly Opinion Series',
-          description: 'Personal LinkedIn series exploring topics including gender, relationships, peace, and development.',
-          technologies: 'LinkedIn Content',
-          bullets: [],
-        ),
-        Project(
-          id: 'pub-lse',
-          name: 'LSE Africa Summit Blog Contributor',
-          description: 'Published “Reclaiming the Pen: Owning Our Stories as African Women,” exploring representation through a feminist African lens.',
-          technologies: 'Academic Writing',
+          id: 'proj-3',
+          name: 'PERSONAL PROJECTS',
+          description: 'AI-powered CV tool, RAG-based experiments, e-learning platform, frontend client projects, Telegram bot automation, and final year project (personalized recommendation system and university news feed for AMU), along with other smaller experimental and learning-based projects in full stack development and APIs. Most of my development work has been through company-based systems, while these personal projects were built alongside to strengthen full stack engineering, data handling, and system design.',
+          technologies: 'Most Programming Languages',
+          link: 'https://linkedin.com/in/mr-robel-hailu-854143239/',
           bullets: [],
         ),
       ],
       languages: [
-        Language(id: 'lang-1', name: 'Amharic', level: 'Native'),
-        Language(id: 'lang-2', name: 'English', level: 'IELTS Overall Score: 8'),
+        Language(id: 'l-1', name: 'Amharic', level: 'Native'),
+        Language(id: 'l-2', name: 'English', level: 'credible'),
       ],
       volunteering: [
         Volunteering(
           id: 'vol-1',
-          role: 'Volunteer Staff',
-          organization: 'Red Cross Society',
-          location: 'Addis Ababa',
-          startDate: '2015',
-          endDate: '2016',
+          role: 'CHARITY LEADERSHIP & FIRST AID VOLUNTEER',
+          organization: 'Amu Charity',
+          location: 'Ethiopia',
+          startDate: '2022',
+          endDate: '2025',
           current: false,
-          description: 'Assisted in community outreach and first aid training programs for local schools.',
+          description: 'Received a certificate for active participation in charity leadership initiatives and organized outreach programs focused on education and social impact\nAssisted in delivering first aid training sessions in local schools, supporting basic health awareness and emergency preparedness\nContributed to the planning and coordination of charity activities, ensuring effective execution of events and participant engagement\nSupported team efforts in charity programs aimed at improving local awareness, education, and social well-being',
         ),
       ],
-      certifications: [
-        Certification(
-          id: 'cert-1',
-          name: 'CHEVENING SCHOLARSHIP',
-          issuer: 'UK Government',
-          date: '2024',
-        ),
-      ],
+      certifications: [],
       customSections: [],
       lastUpdated: DateTime.now(),
     );

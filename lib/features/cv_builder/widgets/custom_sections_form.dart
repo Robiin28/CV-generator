@@ -46,7 +46,6 @@ class CustomSectionsForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sectionsCount = context.select<ResumeService, int>((s) => s.currentResume?.customSections?.length ?? 0);
     final resumeService = context.read<ResumeService>();
     final sections = resumeService.currentResume?.customSections ?? [];
 

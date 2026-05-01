@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'cv_builder_screen.dart';
 import '../../core/services/theme_service.dart';
+import 'templates_body.dart';
+import 'ai_assistant_body.dart';
+import 'settings_body.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -29,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 color: const Color(0xFF0A2540),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Text('RF', style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+              child: const Text('F', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
             ),
             const SizedBox(width: 12),
             Text(
@@ -62,25 +65,15 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: (index) => setState(() => _selectedIndex = index),
         isDark: isDark,
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => const CvBuilderScreen()));
-        },
-        backgroundColor: const Color(0xFF0A2540),
-        foregroundColor: Colors.white,
-        child: const Icon(Icons.add, size: 28),
-        elevation: 8,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 
   Widget _buildBody(int index, bool isDark) {
     switch (index) {
       case 0: return _HomeBody(isDark: isDark);
-      case 1: return const Center(child: Text('Templates Coming Soon'));
-      case 2: return const Center(child: Text('AI Assistant Ready'));
-      case 3: return const Center(child: Text('App Settings'));
+      case 1: return TemplatesBody(isDark: isDark);
+      case 2: return AIAssistantBody(isDark: isDark);
+      case 3: return SettingsBody(isDark: isDark);
       default: return _HomeBody(isDark: isDark);
     }
   }
@@ -99,119 +92,109 @@ class _CurvedBottomNav extends StatelessWidget {
     final activeColor = isDark ? Colors.blueAccent : const Color(0xFF0A2540);
     final inactiveColor = isDark ? Colors.white24 : Colors.grey.shade400;
 
-    return Container(
-      height: 80,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 20, offset: const Offset(0, -5)),
-        ],
-      ),
-      child: Stack(
-        children: [
-          CustomPaint(
-            size: Size(MediaQuery.of(context).size.width, 80),
-            painter: _BNBCustomPainter(backgroundColor),
-          ),
-          Center(
-            heightFactor: 0.6,
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: activeColor,
-                boxShadow: [
-                  BoxShadow(
-                    color: activeColor.withOpacity(0.4),
-                    blurRadius: 15,
-                    spreadRadius: 2,
+    return SafeArea(
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+        height: 70,
+        decoration: BoxDecoration(
+          color: isDark 
+              ? const Color(0xFF1E293B).withValues(alpha: 0.8) 
+              : Colors.white.withValues(alpha: 0.8),
+          borderRadius: BorderRadius.circular(35),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: isDark ? 0.4 : 0.1),
+              blurRadius: 20,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(35),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(child: _buildNavItem(0, Icons.home_outlined, Icons.home, 'Home', activeColor, inactiveColor)),
+              Expanded(child: _buildNavItem(1, Icons.layers_outlined, Icons.layers, 'Templates', activeColor, inactiveColor)),
+              
+              // Center FAB
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => const CvBuilderScreen()));
+                },
+                child: Container(
+                  width: 50,
+                  height: 50,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [activeColor, activeColor.withValues(alpha: 0.8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: activeColor.withValues(alpha: 0.4),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                ],
+                  child: const Icon(Icons.add, color: Colors.white, size: 28),
+                ),
               ),
-              child: const Icon(Icons.add, color: Colors.white, size: 28),
-            ),
+
+              Expanded(child: _buildNavItem(2, Icons.auto_awesome_outlined, Icons.auto_awesome, 'AI', activeColor, inactiveColor)),
+              Expanded(child: _buildNavItem(3, Icons.settings_outlined, Icons.settings, 'Settings', activeColor, inactiveColor)),
+            ],
           ),
-          SizedBox(
-            height: 80,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildNavItem(0, Icons.home_outlined, Icons.home, 'Home', activeColor, inactiveColor),
-                _buildNavItem(1, Icons.layers_outlined, Icons.layers, 'Templates', activeColor, inactiveColor),
-                const SizedBox(width: 80), // Space for FAB
-                _buildNavItem(2, Icons.auto_awesome_outlined, Icons.auto_awesome, 'AI', activeColor, inactiveColor),
-                _buildNavItem(3, Icons.settings_outlined, Icons.settings, 'Settings', activeColor, inactiveColor),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 
   Widget _buildNavItem(int index, IconData icon, IconData activeIcon, String label, Color activeColor, Color inactiveColor) {
     final isSelected = currentIndex == index;
-    return GestureDetector(
+    return InkWell(
       onTap: () => onTap(index),
-      behavior: HitTestBehavior.opaque,
-      child: SizedBox(
-        width: 60,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              child: Icon(
-                isSelected ? activeIcon : icon,
-                color: isSelected ? activeColor : inactiveColor,
-                size: isSelected ? 26 : 24,
+      splashColor: Colors.transparent,
+      highlightColor: Colors.transparent,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isSelected ? activeIcon : icon,
+            color: isSelected ? activeColor : inactiveColor,
+            size: isSelected ? 24 : 22,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
+              color: isSelected ? activeColor : inactiveColor,
+              letterSpacing: 0.2,
+            ),
+          ),
+          if (isSelected)
+            Container(
+              margin: const EdgeInsets.only(top: 4),
+              width: 4,
+              height: 4,
+              decoration: BoxDecoration(
+                color: activeColor,
+                shape: BoxShape.circle,
               ),
             ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                color: isSelected ? activeColor : inactiveColor,
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
 }
 
-class _BNBCustomPainter extends CustomPainter {
-  final Color backgroundColor;
-  _BNBCustomPainter(this.backgroundColor);
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    Paint paint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.fill;
-
-    Path path = Path();
-    path.moveTo(0, 20); // Start
-    path.quadraticBezierTo(size.width * 0.20, 0, size.width * 0.35, 0);
-    path.quadraticBezierTo(size.width * 0.40, 0, size.width * 0.40, 20);
-    path.arcToPoint(Offset(size.width * 0.60, 20), radius: const Radius.circular(20.0), clockwise: false);
-    path.quadraticBezierTo(size.width * 0.60, 0, size.width * 0.65, 0);
-    path.quadraticBezierTo(size.width * 0.80, 0, size.width, 20);
-    path.lineTo(size.width, size.height);
-    path.lineTo(0, size.height);
-    path.close();
-
-    canvas.drawShadow(path, Colors.black, 5, true);
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}
 
 class _HomeBody extends StatelessWidget {
   final bool isDark;
@@ -250,9 +233,9 @@ class _HomeBody extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.blueAccent.withOpacity(0.2),
+                    color: Colors.blueAccent.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.blueAccent.withOpacity(0.5)),
+                    border: Border.all(color: Colors.blueAccent.withValues(alpha: 0.5)),
                   ),
                   child: const Row(
                     mainAxisSize: MainAxisSize.min,
@@ -337,7 +320,7 @@ class _ResumeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: isDark ? Colors.white10 : Colors.grey.shade200),
           boxShadow: [
-            BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(color: Colors.black.withValues(alpha: 0.02), blurRadius: 10, offset: const Offset(0, 4)),
           ],
         ),
         child: Row(
@@ -346,7 +329,7 @@ class _ResumeCard extends StatelessWidget {
               width: 50,
               height: 50,
               decoration: BoxDecoration(
-                color: const Color(0xFF0A2540).withOpacity(0.1),
+                color: const Color(0xFF0A2540).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: const Icon(Icons.description, color: Color(0xFF0A2540)),
