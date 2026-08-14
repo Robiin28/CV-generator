@@ -3,28 +3,44 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
+import 'ai_enhancer_button.dart';
 
 class SkillsForm extends StatelessWidget {
   const SkillsForm({super.key});
 
-  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged) {
+  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged, {String? aiContext}) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label.isNotEmpty) ...[
-          Text(
-            label.toUpperCase(),
-            style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              color: isDark ? Colors.white54 : const Color(0xFF64748B),
-              letterSpacing: 1.0,
-            ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  label.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white54 : const Color(0xFF64748B),
+                    letterSpacing: 1.0,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (aiContext != null)
+                AIEnhancerButton(
+                  currentText: initialValue,
+                  context: aiContext,
+                  onEnhanced: onChanged,
+                ),
+            ],
           ),
           const SizedBox(height: 6),
         ],
         TextFormField(
+          key: ValueKey(initialValue),
           initialValue: initialValue,
           style: TextStyle(color: isDark ? Colors.white : Colors.black87),
           decoration: InputDecoration(
@@ -101,12 +117,18 @@ class SkillsForm extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Category Name', category.category, (val) {
-                            final current = context.read<ResumeService>().currentResume?.skills ?? [];
-                            final newList = List<SkillCategory>.from(current);
-                            newList[catIndex] = newList[catIndex].copyWith(category: val);
-                            context.read<ResumeService>().updateSkills(newList);
-                          }),
+                          child: _buildInputField(
+                            context, 
+                            'Category Name', 
+                            category.category, 
+                            (val) {
+                              final current = context.read<ResumeService>().currentResume?.skills ?? [];
+                              final newList = List<SkillCategory>.from(current);
+                              newList[catIndex] = newList[catIndex].copyWith(category: val);
+                              context.read<ResumeService>().updateSkills(newList);
+                            },
+                            aiContext: 'skill category name (e.g. Technical Skills, Soft Skills)',
+                          ),
                         ),
                         IconButton(
                           icon: const Icon(Icons.delete_outline, color: Colors.redAccent),

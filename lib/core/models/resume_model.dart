@@ -24,6 +24,8 @@ class Resume {
   final String? organisationalSkills;
   final String? jobRelatedSkills;
   final String? additionalInfo;
+  final String? targetJobTitle;
+  final String? targetJobDescription;
 
  Resume({
     required this.id,
@@ -48,6 +50,8 @@ class Resume {
     this.organisationalSkills,
     this.jobRelatedSkills,
     this.additionalInfo,
+    this.targetJobTitle,
+    this.targetJobDescription,
   });
 
   Resume copyWith({
@@ -73,6 +77,8 @@ class Resume {
     String? organisationalSkills,
     String? jobRelatedSkills,
     String? additionalInfo,
+    String? targetJobTitle,
+    String? targetJobDescription,
   }) {
     return Resume(
       id: id ?? this.id,
@@ -97,6 +103,8 @@ class Resume {
       organisationalSkills: organisationalSkills ?? this.organisationalSkills,
       jobRelatedSkills: jobRelatedSkills ?? this.jobRelatedSkills,
       additionalInfo: additionalInfo ?? this.additionalInfo,
+      targetJobTitle: targetJobTitle ?? this.targetJobTitle,
+      targetJobDescription: targetJobDescription ?? this.targetJobDescription,
     );
   }
 
@@ -123,6 +131,8 @@ class Resume {
     'organisationalSkills': organisationalSkills,
     'jobRelatedSkills': jobRelatedSkills,
     'additionalInfo': additionalInfo,
+    'targetJobTitle': targetJobTitle,
+    'targetJobDescription': targetJobDescription,
   };
 
   factory Resume.fromJson(Map<String, dynamic> json) => Resume(
@@ -148,6 +158,8 @@ class Resume {
     organisationalSkills: json['organisationalSkills'],
     jobRelatedSkills: json['jobRelatedSkills'],
     additionalInfo: json['additionalInfo'],
+    targetJobTitle: json['targetJobTitle'],
+    targetJobDescription: json['targetJobDescription'],
   );
 }
 
@@ -181,6 +193,7 @@ class PersonalInfo {
   final String email;
   final String phone;
   final String location;
+  final String? address;
   final String? jobTitle;
   final String? photo;
   final String? website;
@@ -193,6 +206,7 @@ class PersonalInfo {
     required this.email,
     required this.phone,
     required this.location,
+    this.address,
     this.jobTitle,
     this.photo,
     this.website,
@@ -206,6 +220,7 @@ class PersonalInfo {
     String? email,
     String? phone,
     String? location,
+    String? address,
     String? jobTitle,
     String? photo,
     String? website,
@@ -218,6 +233,7 @@ class PersonalInfo {
       email: email ?? this.email,
       phone: phone ?? this.phone,
       location: location ?? this.location,
+      address: address ?? this.address,
       jobTitle: jobTitle ?? this.jobTitle,
       photo: photo ?? this.photo,
       website: website ?? this.website,
@@ -232,6 +248,7 @@ class PersonalInfo {
     'email': email,
     'phone': phone,
     'location': location,
+    'address': address,
     'jobTitle': jobTitle,
     'photo': photo,
     'website': website,
@@ -245,6 +262,7 @@ class PersonalInfo {
     email: json['email'],
     phone: json['phone'],
     location: json['location'],
+    address: json['address'],
     jobTitle: json['jobTitle'],
     photo: json['photo'],
     website: json['website'],

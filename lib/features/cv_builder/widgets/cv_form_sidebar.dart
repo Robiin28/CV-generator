@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'job_tailoring_form.dart';
 import 'personal_info_form.dart';
 import 'experience_form.dart';
 import 'education_form.dart';
@@ -21,6 +22,7 @@ class _CvFormSidebarState extends State<CvFormSidebar> {
   final ScrollController _scrollController = ScrollController();
 
   final List<Map<String, dynamic>> _steps = [
+    {'title': 'Job Tailoring', 'icon': Icons.track_changes_outlined, 'form': const JobTailoringForm()},
     {'title': 'Personal', 'icon': Icons.person_outline, 'form': const PersonalInfoForm()},
     {'title': 'Summary', 'icon': Icons.description_outlined, 'form': const SummaryForm()},
     {'title': 'Experience', 'icon': Icons.work_outline, 'form': const ExperienceForm()},

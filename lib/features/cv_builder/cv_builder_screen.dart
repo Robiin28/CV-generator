@@ -185,29 +185,142 @@ class _CvBuilderScreenState extends State<CvBuilderScreen> {
               ),
             ],
           ),
-          ElevatedButton.icon(
-            onPressed: () async {
-              final resumeService = context.read<ResumeService>();
-              final resume = resumeService.currentResume;
-              if (resume != null) {
-                await PdfService.generateAndDownload(resume);
-                await resumeService.showNotification(
-                  'Resume Exported!',
-                  'Your professional CV is ready and has been downloaded.',
-                );
-              }
-            },
-            icon: const Icon(Icons.download_rounded, size: 18),
-            label: const Text('Download'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0A2540),
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-              elevation: 0,
-            ),
+          Row(
+            children: [
+              AnimatedSaveButton(
+                isDark: isDark,
+                onSave: () async {
+                  final resumeService = context.read<ResumeService>();
+                  final resume = resumeService.currentResume;
+                  if (resume != null) {
+                    resumeService.updateResume(resume);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('CV progress saved to local storage!'),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    await resumeService.showNotification(
+                      'Progress Saved',
+                      'Your resume changes have been successfully persisted.',
+                    );
+                  }
+                },
+              ),
+              const SizedBox(width: 12),
+              ElevatedButton.icon(
+                onPressed: () async {
+                  final resumeService = context.read<ResumeService>();
+                  final resume = resumeService.currentResume;
+                  if (resume != null) {
+                    await PdfService.generateAndDownload(resume);
+                    await resumeService.showNotification(
+                      'Resume Exported!',
+                      'Your professional CV is ready and has been downloaded.',
+                    );
+                  }
+                },
+                icon: const Icon(Icons.download_rounded, size: 18),
+                label: const Text('Download'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFF0A2540),
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  elevation: 0,
+                ),
+              ),
+            ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class AnimatedSaveButton extends StatefulWidget {
+  final bool isDark;
+  final Future<void> Function() onSave;
+
+  const AnimatedSaveButton({
+    super.key,
+    required this.isDark,
+    required this.onSave,
+  });
+
+  @override
+  State<AnimatedSaveButton> createState() => _AnimatedSaveButtonState();
+}
+
+class _AnimatedSaveButtonState extends State<AnimatedSaveButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  bool _isSaving = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 150),
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.9).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleTap() async {
+    if (_isSaving) return;
+    
+    await _controller.forward();
+    await _controller.reverse();
+    
+    setState(() {
+      _isSaving = true;
+    });
+
+    try {
+      await widget.onSave();
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSaving = false;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: OutlinedButton.icon(
+        onPressed: _handleTap,
+        icon: _isSaving 
+            ? const SizedBox(
+                width: 14,
+                height: 14,
+                child: CircularProgressIndicator(strokeWidth: 2, valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent)),
+              )
+            : const Icon(Icons.save_outlined, size: 18),
+        label: Text(_isSaving ? 'Saving...' : 'Save Progress'),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: widget.isDark ? Colors.white70 : const Color(0xFF0A2540),
+          side: BorderSide(
+            color: _isSaving 
+                ? Colors.blueAccent 
+                : (widget.isDark ? Colors.white24 : Colors.grey.shade300),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        ),
       ),
     );
   }

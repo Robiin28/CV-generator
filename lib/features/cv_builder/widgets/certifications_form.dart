@@ -3,50 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
+import 'ai_input_field.dart';
 
 class CertificationsForm extends StatelessWidget {
   const CertificationsForm({super.key});
-
-  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white54 : const Color(0xFF64748B),
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextFormField(
-          initialValue: initialValue,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-          decoration: InputDecoration(
-            fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          ),
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -104,12 +64,17 @@ class CertificationsForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Certification Name', cert.name, (val) {
-                            final current = context.read<ResumeService>().currentResume?.certifications ?? [];
-                            final newList = List<Certification>.from(current);
-                            newList[index] = newList[index].copyWith(name: val);
-                            context.read<ResumeService>().updateCertifications(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Certification Name', 
+                            initialValue: cert.name, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.certifications ?? [];
+                              final newList = List<Certification>.from(current);
+                              newList[index] = newList[index].copyWith(name: val);
+                              context.read<ResumeService>().updateCertifications(newList);
+                            }, 
+                            aiContext: 'professional certification name',
+                          ),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
@@ -126,21 +91,29 @@ class CertificationsForm extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Issuer', cert.issuer, (val) {
-                            final current = context.read<ResumeService>().currentResume?.certifications ?? [];
-                            final newList = List<Certification>.from(current);
-                            newList[index] = newList[index].copyWith(issuer: val);
-                            context.read<ResumeService>().updateCertifications(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Issuer', 
+                            initialValue: cert.issuer, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.certifications ?? [];
+                              final newList = List<Certification>.from(current);
+                              newList[index] = newList[index].copyWith(issuer: val);
+                              context.read<ResumeService>().updateCertifications(newList);
+                            },
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField(context, 'Date', cert.date, (val) {
-                            final current = context.read<ResumeService>().currentResume?.certifications ?? [];
-                            final newList = List<Certification>.from(current);
-                            newList[index] = newList[index].copyWith(date: val);
-                            context.read<ResumeService>().updateCertifications(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Date', 
+                            initialValue: cert.date, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.certifications ?? [];
+                              final newList = List<Certification>.from(current);
+                              newList[index] = newList[index].copyWith(date: val);
+                              context.read<ResumeService>().updateCertifications(newList);
+                            },
+                          ),
                         ),
                       ],
                     ),

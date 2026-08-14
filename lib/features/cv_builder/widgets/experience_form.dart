@@ -3,51 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
+import 'ai_input_field.dart';
 
 class ExperienceForm extends StatelessWidget {
   const ExperienceForm({super.key});
-
-  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged, {int maxLines = 1}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white54 : const Color(0xFF64748B),
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextFormField(
-          initialValue: initialValue,
-          maxLines: maxLines,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-          decoration: InputDecoration(
-            fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          ),
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -109,12 +68,16 @@ class ExperienceForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Job Title', exp.jobTitle, (val) {
-                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(current);
-                            newList[index] = newList[index].copyWith(jobTitle: val);
-                            context.read<ResumeService>().updateExperience(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Job Title', 
+                            initialValue: exp.jobTitle, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                              final newList = List<Experience>.from(current);
+                              newList[index] = newList[index].copyWith(jobTitle: val);
+                              context.read<ResumeService>().updateExperience(newList);
+                            },
+                          ),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
@@ -128,41 +91,59 @@ class ExperienceForm extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField(context, 'Company', exp.company, (val) {
-                      final current = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(current);
-                      newList[index] = newList[index].copyWith(company: val);
-                      context.read<ResumeService>().updateExperience(newList);
-                    }),
+                    AIInputField(
+                      label: 'Company', 
+                      initialValue: exp.company, 
+                      onChanged: (val) {
+                        final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                        final newList = List<Experience>.from(current);
+                        newList[index] = newList[index].copyWith(company: val);
+                        context.read<ResumeService>().updateExperience(newList);
+                      },
+                    ),
                     const SizedBox(height: 20),
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Start Date', exp.startDate, (val) {
-                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(current);
-                            newList[index] = newList[index].copyWith(startDate: val);
-                            context.read<ResumeService>().updateExperience(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Start Date', 
+                            initialValue: exp.startDate, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                              final newList = List<Experience>.from(current);
+                              newList[index] = newList[index].copyWith(startDate: val);
+                              context.read<ResumeService>().updateExperience(newList);
+                            },
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField(context, 'End Date', exp.endDate, (val) {
-                            final current = context.read<ResumeService>().currentResume?.experience ?? [];
-                            final newList = List<Experience>.from(current);
-                            newList[index] = newList[index].copyWith(endDate: val);
-                            context.read<ResumeService>().updateExperience(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'End Date', 
+                            initialValue: exp.endDate, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                              final newList = List<Experience>.from(current);
+                              newList[index] = newList[index].copyWith(endDate: val);
+                              context.read<ResumeService>().updateExperience(newList);
+                            },
+                          ),
                         ),
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField(context, 'Description', exp.description, (val) {
-                      final current = context.read<ResumeService>().currentResume?.experience ?? [];
-                      final newList = List<Experience>.from(current);
-                      newList[index] = newList[index].copyWith(description: val);
-                      context.read<ResumeService>().updateExperience(newList);
-                    }, maxLines: 3),
+                    AIInputField(
+                      label: 'Description', 
+                      initialValue: exp.description, 
+                      maxLines: 3,
+                      onChanged: (val) {
+                        final current = context.read<ResumeService>().currentResume?.experience ?? [];
+                        final newList = List<Experience>.from(current);
+                        newList[index] = newList[index].copyWith(description: val);
+                        context.read<ResumeService>().updateExperience(newList);
+                      }, 
+                      aiContext: 'job description for ${exp.jobTitle} at ${exp.company}',
+                    ),
                   ],
                 ),
               ),

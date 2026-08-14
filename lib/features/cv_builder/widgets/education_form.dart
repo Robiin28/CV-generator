@@ -3,50 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
+import 'ai_input_field.dart';
 
 class EducationForm extends StatelessWidget {
   const EducationForm({super.key});
-
-  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white54 : const Color(0xFF64748B),
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextFormField(
-          initialValue: initialValue,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-          decoration: InputDecoration(
-            fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          ),
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,12 +66,16 @@ class EducationForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'School / University', edu.school, (val) {
-                            final current = context.read<ResumeService>().currentResume?.education ?? [];
-                            final newList = List<Education>.from(current);
-                            newList[index] = newList[index].copyWith(school: val);
-                            context.read<ResumeService>().updateEducation(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'School / University', 
+                            initialValue: edu.school, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.education ?? [];
+                              final newList = List<Education>.from(current);
+                              newList[index] = newList[index].copyWith(school: val);
+                              context.read<ResumeService>().updateEducation(newList);
+                            },
+                          ),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
@@ -128,21 +92,31 @@ class EducationForm extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Degree', edu.degree, (val) {
-                            final current = context.read<ResumeService>().currentResume?.education ?? [];
-                            final newList = List<Education>.from(current);
-                            newList[index] = newList[index].copyWith(degree: val);
-                            context.read<ResumeService>().updateEducation(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Degree', 
+                            initialValue: edu.degree, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.education ?? [];
+                              final newList = List<Education>.from(current);
+                              newList[index] = newList[index].copyWith(degree: val);
+                              context.read<ResumeService>().updateEducation(newList);
+                            },
+                            aiContext: 'academic degree name',
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField(context, 'Field of Study', edu.fieldOfStudy, (val) {
-                            final current = context.read<ResumeService>().currentResume?.education ?? [];
-                            final newList = List<Education>.from(current);
-                            newList[index] = newList[index].copyWith(fieldOfStudy: val);
-                            context.read<ResumeService>().updateEducation(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Field of Study', 
+                            initialValue: edu.fieldOfStudy, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.education ?? [];
+                              final newList = List<Education>.from(current);
+                              newList[index] = newList[index].copyWith(fieldOfStudy: val);
+                              context.read<ResumeService>().updateEducation(newList);
+                            },
+                            aiContext: 'academic field of study',
+                          ),
                         ),
                       ],
                     ),
@@ -150,21 +124,29 @@ class EducationForm extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Start Date', edu.startDate, (val) {
-                            final current = context.read<ResumeService>().currentResume?.education ?? [];
-                            final newList = List<Education>.from(current);
-                            newList[index] = newList[index].copyWith(startDate: val);
-                            context.read<ResumeService>().updateEducation(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Start Date', 
+                            initialValue: edu.startDate, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.education ?? [];
+                              final newList = List<Education>.from(current);
+                              newList[index] = newList[index].copyWith(startDate: val);
+                              context.read<ResumeService>().updateEducation(newList);
+                            },
+                          ),
                         ),
                         const SizedBox(width: 16),
                         Expanded(
-                          child: _buildInputField(context, 'End Date', edu.endDate, (val) {
-                            final current = context.read<ResumeService>().currentResume?.education ?? [];
-                            final newList = List<Education>.from(current);
-                            newList[index] = newList[index].copyWith(endDate: val);
-                            context.read<ResumeService>().updateEducation(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'End Date', 
+                            initialValue: edu.endDate, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.education ?? [];
+                              final newList = List<Education>.from(current);
+                              newList[index] = newList[index].copyWith(endDate: val);
+                              context.read<ResumeService>().updateEducation(newList);
+                            },
+                          ),
                         ),
                       ],
                     ),

@@ -3,75 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
+import 'ai_input_field.dart';
 
 class PersonalInfoForm extends StatelessWidget {
   const PersonalInfoForm({super.key});
-
-  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged, {String? hint}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Text(
-              label.toUpperCase(),
-              style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white54 : const Color(0xFF64748B),
-                letterSpacing: 1.2,
-              ),
-            ),
-            const SizedBox(width: 6),
-            if (hint != null)
-              Tooltip(
-                message: hint,
-                triggerMode: TooltipTriggerMode.tap,
-                child: Icon(Icons.info_outline, size: 14, color: isDark ? Colors.blueAccent : const Color(0xFF0A2540)),
-              ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              if (!isDark) BoxShadow(
-                color: Colors.black.withValues(alpha: 0.03),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: TextFormField(
-            initialValue: initialValue,
-            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-            decoration: InputDecoration(
-              fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-              filled: true,
-              hintText: label,
-              hintStyle: TextStyle(color: isDark ? Colors.white24 : Colors.grey.shade400, fontSize: 14),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade200),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
-              ),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-            ),
-            onChanged: onChanged,
-          ),
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,16 +58,24 @@ class PersonalInfoForm extends StatelessWidget {
           Divider(color: isDark ? Colors.white10 : Colors.grey.shade200),
           const SizedBox(height: 32),
 
-          _buildInputField(context, 'Full Name', personalInfo.fullName, (val) {
-            final current = context.read<ResumeService>().currentResume!.personalInfo;
-            context.read<ResumeService>().updatePersonalInfo(current.copyWith(fullName: val));
-          }, hint: 'Enter your legal name as it should appear on your CV.'),
+          AIInputField(
+            label: 'Full Name', 
+            initialValue: personalInfo.fullName, 
+            onChanged: (val) {
+              final current = context.read<ResumeService>().currentResume!.personalInfo;
+              context.read<ResumeService>().updatePersonalInfo(current.copyWith(fullName: val));
+            },
+          ),
           const SizedBox(height: 24),
           
-          _buildInputField(context, 'Job Title', personalInfo.jobTitle ?? '', (val) {
-            final current = context.read<ResumeService>().currentResume!.personalInfo;
-            context.read<ResumeService>().updatePersonalInfo(current.copyWith(jobTitle: val));
-          }, hint: 'The specific position you are applying for (e.g., Senior Developer).'),
+          AIInputField(
+            label: 'Job Title', 
+            initialValue: personalInfo.jobTitle ?? '', 
+            onChanged: (val) {
+              final current = context.read<ResumeService>().currentResume!.personalInfo;
+              context.read<ResumeService>().updatePersonalInfo(current.copyWith(jobTitle: val));
+            },
+          ),
           const SizedBox(height: 24),
 
           Wrap(
@@ -141,17 +84,25 @@ class PersonalInfoForm extends StatelessWidget {
             children: [
               SizedBox(
                 width: 300,
-                child: _buildInputField(context, 'Email Address', personalInfo.email, (val) {
-                  final current = context.read<ResumeService>().currentResume!.personalInfo;
-                  context.read<ResumeService>().updatePersonalInfo(current.copyWith(email: val));
-                }, hint: 'Use a professional email address.'),
+                child: AIInputField(
+                  label: 'Email Address', 
+                  initialValue: personalInfo.email, 
+                  onChanged: (val) {
+                    final current = context.read<ResumeService>().currentResume!.personalInfo;
+                    context.read<ResumeService>().updatePersonalInfo(current.copyWith(email: val));
+                  },
+                ),
               ),
               SizedBox(
                 width: 300,
-                child: _buildInputField(context, 'Phone Number', personalInfo.phone, (val) {
-                  final current = context.read<ResumeService>().currentResume!.personalInfo;
-                  context.read<ResumeService>().updatePersonalInfo(current.copyWith(phone: val));
-                }, hint: 'Include your country code for international reach.'),
+                child: AIInputField(
+                  label: 'Phone Number', 
+                  initialValue: personalInfo.phone, 
+                  onChanged: (val) {
+                    final current = context.read<ResumeService>().currentResume!.personalInfo;
+                    context.read<ResumeService>().updatePersonalInfo(current.copyWith(phone: val));
+                  },
+                ),
               ),
             ],
           ),
@@ -163,24 +114,36 @@ class PersonalInfoForm extends StatelessWidget {
             children: [
               SizedBox(
                 width: 300,
-                child: _buildInputField(context, 'Location', personalInfo.location, (val) {
-                  final current = context.read<ResumeService>().currentResume!.personalInfo;
-                  context.read<ResumeService>().updatePersonalInfo(current.copyWith(location: val));
-                }, hint: 'City, Country (e.g., London, UK).'),
+                child: AIInputField(
+                  label: 'Location', 
+                  initialValue: personalInfo.location, 
+                  onChanged: (val) {
+                    final current = context.read<ResumeService>().currentResume!.personalInfo;
+                    context.read<ResumeService>().updatePersonalInfo(current.copyWith(location: val));
+                  },
+                ),
               ),
               SizedBox(
                 width: 300,
-                child: _buildInputField(context, 'LinkedIn', personalInfo.linkedin ?? '', (val) {
-                  final current = context.read<ResumeService>().currentResume!.personalInfo;
-                  context.read<ResumeService>().updatePersonalInfo(current.copyWith(linkedin: val));
-                }, hint: 'Paste your full LinkedIn profile URL.'),
+                child: AIInputField(
+                  label: 'LinkedIn', 
+                  initialValue: personalInfo.linkedin ?? '', 
+                  onChanged: (val) {
+                    final current = context.read<ResumeService>().currentResume!.personalInfo;
+                    context.read<ResumeService>().updatePersonalInfo(current.copyWith(linkedin: val));
+                  },
+                ),
               ),
               SizedBox(
                 width: 300,
-                child: _buildInputField(context, 'Portfolio / Website', personalInfo.website ?? '', (val) {
-                  final current = context.read<ResumeService>().currentResume!.personalInfo;
-                  context.read<ResumeService>().updatePersonalInfo(current.copyWith(website: val));
-                }, hint: 'Optional: your portfolio or personal website URL.'),
+                child: AIInputField(
+                  label: 'Portfolio / Website', 
+                  initialValue: personalInfo.website ?? '', 
+                  onChanged: (val) {
+                    final current = context.read<ResumeService>().currentResume!.personalInfo;
+                    context.read<ResumeService>().updatePersonalInfo(current.copyWith(website: val));
+                  },
+                ),
               ),
             ],
           ),
@@ -241,21 +204,29 @@ class PersonalInfoForm extends StatelessWidget {
                   children: [
                     SizedBox(
                       width: 160,
-                      child: _buildInputField(context, 'Label', field.label, (val) {
-                        final current = context.read<ResumeService>().currentResume!.personalInfo;
-                        final updatedFields = List<CustomField>.from(current.customFields!);
-                        updatedFields[idx] = CustomField(label: val, value: field.value);
-                        context.read<ResumeService>().updatePersonalInfo(current.copyWith(customFields: updatedFields));
-                      }),
+                      child: AIInputField(
+                        label: 'Label', 
+                        initialValue: field.label, 
+                        onChanged: (val) {
+                          final current = context.read<ResumeService>().currentResume!.personalInfo;
+                          final updatedFields = List<CustomField>.from(current.customFields!);
+                          updatedFields[idx] = CustomField(label: val, value: field.value);
+                          context.read<ResumeService>().updatePersonalInfo(current.copyWith(customFields: updatedFields));
+                        },
+                      ),
                     ),
                     SizedBox(
                       width: 200,
-                      child: _buildInputField(context, 'Value', field.value, (val) {
-                        final current = context.read<ResumeService>().currentResume!.personalInfo;
-                        final updatedFields = List<CustomField>.from(current.customFields!);
-                        updatedFields[idx] = CustomField(label: field.label, value: val);
-                        context.read<ResumeService>().updatePersonalInfo(current.copyWith(customFields: updatedFields));
-                      }),
+                      child: AIInputField(
+                        label: 'Value', 
+                        initialValue: field.value, 
+                        onChanged: (val) {
+                          final current = context.read<ResumeService>().currentResume!.personalInfo;
+                          final updatedFields = List<CustomField>.from(current.customFields!);
+                          updatedFields[idx] = CustomField(label: field.label, value: val);
+                          context.read<ResumeService>().updatePersonalInfo(current.copyWith(customFields: updatedFields));
+                        },
+                      ),
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete_outline, color: Colors.redAccent, size: 20),

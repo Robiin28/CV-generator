@@ -6,7 +6,31 @@ import '../models/resume_model.dart';
 
 class ResumeService extends ChangeNotifier {
   Resume? _currentResume;
+  List<Resume> _resumes = [];
+  
+  List<Resume> get resumes => _resumes;
+
   static const String _storageKey = 'saved_resume_data';
+  static const String _chatHistoryKey = 'ai_chat_history_data';
+  static const String _resumesListKey = 'saved_resumes_list_v2';
+  static const String _activeResumeIdKey = 'active_resume_id_v2';
+
+  List<Map<String, dynamic>> _aiChatHistory = [
+    {
+      'isUser': false,
+      'text': 'Hello! I\'m your AI career coach. How can I help you improve your CV today?',
+    }
+  ];
+
+  List<Map<String, dynamic>> get aiChatHistory => _aiChatHistory;
+  
+  String? _initialChatPrompt;
+  String? get initialChatPrompt => _initialChatPrompt;
+
+  void setInitialChatPrompt(String? prompt) {
+    _initialChatPrompt = prompt;
+    notifyListeners();
+  }
   
   final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
 
@@ -24,6 +48,7 @@ class ResumeService extends ChangeNotifier {
       debugPrint('Notification init failed: $e');
     }
     await _loadFromStorage();
+    await _loadChatHistory();
   }
 
   Future<void> _initNotifications() async {
@@ -47,46 +72,186 @@ class ResumeService extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       
-      // TEMPORARY: Clear preferences to reset user state after a corrupted build
-      // await prefs.clear(); 
-
-      final savedData = prefs.getString(_storageKey);
+      final listData = prefs.getString(_resumesListKey);
+      final activeId = prefs.getString(_activeResumeIdKey);
       
-      if (savedData != null) {
-        final Map<String, dynamic> json = jsonDecode(savedData);
-        final loadedResume = Resume.fromJson(json);
-        
-        // Validation check to prevent loading a completely empty resume
-        if (loadedResume.personalInfo.fullName.isEmpty && loadedResume.experience.isEmpty) {
-          _currentResume = _createDummyResume();
+      if (listData != null) {
+        final List<dynamic> decoded = jsonDecode(listData);
+        _resumes = decoded.map((json) => Resume.fromJson(Map<String, dynamic>.from(json))).toList();
+      }
+      
+      // Migrate old single resume data for backwards compatibility
+      if (_resumes.isEmpty) {
+        final oldSavedData = prefs.getString(_storageKey);
+        if (oldSavedData != null) {
+          try {
+            final Map<String, dynamic> json = jsonDecode(oldSavedData);
+            final oldResume = Resume.fromJson(json);
+            _resumes.add(oldResume);
+          } catch (e) {
+            debugPrint('Error migrating old single resume: $e');
+          }
+        }
+      }
+      
+      if (_resumes.isEmpty) {
+        _resumes.add(_createDummyResume());
+      }
+      
+      if (activeId != null) {
+        final idx = _resumes.indexWhere((r) => r.id == activeId);
+        if (idx != -1) {
+          _currentResume = _resumes[idx];
         } else {
-          _currentResume = loadedResume;
+          _currentResume = _resumes.first;
         }
       } else {
-        _currentResume = _createDummyResume();
+        _currentResume = _resumes.first;
       }
+      
       notifyListeners();
     } catch (e) {
-      debugPrint('Error loading resume: $e');
-      _currentResume = _createDummyResume();
+      debugPrint('Error loading resumes: $e');
+      if (_resumes.isEmpty) {
+        _resumes.add(_createDummyResume());
+      }
+      _currentResume = _resumes.first;
       notifyListeners();
+    }
+  }
+
+  Future<void> _saveAllToStorage() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final listJson = _resumes.map((r) => r.toJson()).toList();
+      await prefs.setString(_resumesListKey, jsonEncode(listJson));
+      
+      if (_currentResume != null) {
+        await prefs.setString(_activeResumeIdKey, _currentResume!.id);
+      }
+    } catch (e) {
+      debugPrint('Error saving all resumes to storage: $e');
     }
   }
 
   Future<void> _saveToStorage() async {
     if (_currentResume == null) return;
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      final jsonStr = jsonEncode(_currentResume!.toJson());
-      await prefs.setString(_storageKey, jsonStr);
-    } catch (e) {
-      debugPrint('Error saving resume: $e');
+    
+    final idx = _resumes.indexWhere((r) => r.id == _currentResume!.id);
+    if (idx != -1) {
+      _resumes[idx] = _currentResume!;
+    } else {
+      _resumes.add(_currentResume!);
     }
+    
+    await _saveAllToStorage();
   }
 
   void updateResume(Resume newResume) {
     _currentResume = newResume;
     _saveToStorage();
+    notifyListeners();
+  }
+
+  Future<void> saveCurrentResumeAs(String newTitle) async {
+    if (_currentResume == null) return;
+    
+    final newId = 'resume-${DateTime.now().millisecondsSinceEpoch}';
+    final newResume = _currentResume!.copyWith(
+      id: newId,
+      title: newTitle,
+      lastUpdated: DateTime.now(),
+    );
+    
+    _resumes.add(newResume);
+    _currentResume = newResume;
+    
+    await _saveAllToStorage();
+    notifyListeners();
+  }
+
+  Future<void> loadResume(String resumeId) async {
+    final idx = _resumes.indexWhere((r) => r.id == resumeId);
+    if (idx != -1) {
+      _currentResume = _resumes[idx];
+      await _saveAllToStorage();
+      notifyListeners();
+    }
+  }
+
+  Future<void> deleteResume(String resumeId) async {
+    if (_resumes.length <= 1) return;
+    
+    final idx = _resumes.indexWhere((r) => r.id == resumeId);
+    if (idx != -1) {
+      _resumes.removeAt(idx);
+      if (_currentResume?.id == resumeId) {
+        _currentResume = _resumes.first;
+      }
+      await _saveAllToStorage();
+      notifyListeners();
+    }
+  }
+
+  Future<void> duplicateResume(String resumeId, String newTitle) async {
+    final idx = _resumes.indexWhere((r) => r.id == resumeId);
+    if (idx != -1) {
+      final baseResume = _resumes[idx];
+      final newId = 'resume-${DateTime.now().millisecondsSinceEpoch}';
+      final cloned = baseResume.copyWith(
+        id: newId,
+        title: newTitle,
+        lastUpdated: DateTime.now(),
+      );
+      
+      _resumes.add(cloned);
+      _currentResume = cloned;
+      
+      await _saveAllToStorage();
+      notifyListeners();
+    }
+  }
+
+  Future<void> renameResume(String resumeId, String newTitle) async {
+    final idx = _resumes.indexWhere((r) => r.id == resumeId);
+    if (idx != -1) {
+      _resumes[idx] = _resumes[idx].copyWith(
+        title: newTitle,
+        lastUpdated: DateTime.now(),
+      );
+      if (_currentResume?.id == resumeId) {
+        _currentResume = _resumes[idx];
+      }
+      await _saveAllToStorage();
+      notifyListeners();
+    }
+  }
+
+  Future<void> createNewResume(String title) async {
+    final newId = 'resume-${DateTime.now().millisecondsSinceEpoch}';
+    final newResume = Resume(
+      id: newId,
+      title: title,
+      personalInfo: PersonalInfo(
+        fullName: _currentResume?.personalInfo.fullName ?? '',
+        email: _currentResume?.personalInfo.email ?? '',
+        phone: _currentResume?.personalInfo.phone ?? '',
+        address: _currentResume?.personalInfo.address ?? '',
+        website: _currentResume?.personalInfo.website ?? '',
+        linkedin: _currentResume?.personalInfo.linkedin ?? '',
+        github: _currentResume?.personalInfo.github ?? '',
+      ),
+      summary: '',
+      experience: [],
+      education: [],
+      skills: [],
+      lastUpdated: DateTime.now(),
+    );
+    
+    _resumes.add(newResume);
+    _currentResume = newResume;
+    
+    await _saveAllToStorage();
     notifyListeners();
   }
 
@@ -168,6 +333,144 @@ class ResumeService extends ChangeNotifier {
       _saveToStorage();
       notifyListeners();
     }
+  }
+
+  void updateTargetJob(String title, String description) {
+    if (_currentResume != null) {
+      _currentResume = _currentResume!.copyWith(
+        targetJobTitle: title,
+        targetJobDescription: description,
+        lastUpdated: DateTime.now(),
+      );
+      _saveToStorage();
+      notifyListeners();
+    }
+  }
+
+  Future<void> _loadChatHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedChat = prefs.getString(_chatHistoryKey);
+      if (savedChat != null) {
+        final List<dynamic> decoded = jsonDecode(savedChat);
+        _aiChatHistory = decoded.map((item) => Map<String, dynamic>.from(item)).toList();
+        notifyListeners();
+      }
+    } catch (e) {
+      debugPrint('Error loading chat history: $e');
+    }
+  }
+
+  Future<void> _saveChatHistory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonStr = jsonEncode(_aiChatHistory);
+      await prefs.setString(_chatHistoryKey, jsonStr);
+    } catch (e) {
+      debugPrint('Error saving chat history: $e');
+    }
+  }
+
+  void addAiChatMessage(bool isUser, String text) {
+    _aiChatHistory.add({'isUser': isUser, 'text': text});
+    _saveChatHistory();
+    notifyListeners();
+  }
+
+  void clearAiChatHistory() {
+    _aiChatHistory = [
+      {
+        'isUser': false,
+        'text': 'Hello! I\'m your AI career coach. How can I help you improve your CV today?',
+      }
+    ];
+    _saveChatHistory();
+    notifyListeners();
+  }
+
+  void applyAiSuggestion(int messageIndex, String section, String? id, String suggestedText) {
+    if (_currentResume == null) return;
+
+    // Helper for robust ID matching (e.g., handles "1" matching "exp-1", case differences, and spaces/dashes)
+    bool matchesId(String itemId, String suggestedId) {
+      final id1 = itemId.trim().toLowerCase();
+      final id2 = suggestedId.trim().toLowerCase();
+      if (id1 == id2) return true;
+      
+      final clean1 = id1.replaceAll(RegExp(r'[^a-z0-9]'), '');
+      final clean2 = id2.replaceAll(RegExp(r'[^a-z0-9]'), '');
+      if (clean1 == clean2) return true;
+      
+      if (clean2.isNotEmpty && clean1.endsWith(clean2)) return true;
+      if (clean1.isNotEmpty && clean2.endsWith(clean1)) return true;
+      
+      return false;
+    }
+
+    // Normalize section names to support singular, plural, and underscore formats
+    final s = section.toLowerCase().trim();
+    final isSummary = s == 'summary';
+    final isExperience = s == 'experience' || s == 'experiences' || s == 'work_experience' || s == 'work_experiences' || s.contains('experience');
+    final isProject = s == 'project' || s == 'projects' || s.contains('project');
+    final isSkill = s == 'skills' || s == 'skill' || s.contains('skill');
+    final isEducation = s == 'education' || s == 'educations' || s.contains('education');
+
+    if (isSummary) {
+      _currentResume = _currentResume!.copyWith(summary: suggestedText, lastUpdated: DateTime.now());
+    } else if (isExperience && id != null) {
+      final updatedExp = _currentResume!.experience.map((exp) {
+        if (matchesId(exp.id, id)) {
+          return exp.copyWith(description: suggestedText);
+        }
+        return exp;
+      }).toList();
+      _currentResume = _currentResume!.copyWith(experience: updatedExp, lastUpdated: DateTime.now());
+    } else if (isProject && id != null && _currentResume!.projects != null) {
+      final updatedProj = _currentResume!.projects!.map((proj) {
+        if (matchesId(proj.id, id)) {
+          return proj.copyWith(description: suggestedText);
+        }
+        return proj;
+      }).toList();
+      _currentResume = _currentResume!.copyWith(projects: updatedProj, lastUpdated: DateTime.now());
+    } else if (isSkill && id != null) {
+      final updatedSkills = _currentResume!.skills.map((cat) {
+        if (matchesId(cat.category, id)) {
+          List<String> newSkillsList;
+          try {
+            final parsed = jsonDecode(suggestedText);
+            if (parsed is List) {
+              newSkillsList = parsed.map((e) => e.toString()).toList();
+            } else {
+              throw Exception();
+            }
+          } catch (_) {
+            newSkillsList = suggestedText.split(',').map((s) => s.trim()).where((s) => s.isNotEmpty).toList();
+          }
+          return cat.copyWith(skills: newSkillsList);
+        }
+        return cat;
+      }).toList();
+      _currentResume = _currentResume!.copyWith(skills: updatedSkills, lastUpdated: DateTime.now());
+    } else if (isEducation && id != null) {
+      final updatedEdu = _currentResume!.education.map((edu) {
+        if (matchesId(edu.id, id)) {
+          return edu.copyWith(description: suggestedText);
+        }
+        return edu;
+      }).toList();
+      _currentResume = _currentResume!.copyWith(education: updatedEdu, lastUpdated: DateTime.now());
+    }
+
+    // Update the message in chat history to mark it as applied
+    if (messageIndex >= 0 && messageIndex < _aiChatHistory.length) {
+      _aiChatHistory[messageIndex] = Map<String, dynamic>.from(_aiChatHistory[messageIndex]);
+      _aiChatHistory[messageIndex]['applied'] = true;
+      _saveChatHistory();
+    }
+
+    _saveToStorage();
+    notifyListeners();
   }
 
   Resume _createDummyResume() {
@@ -314,6 +617,8 @@ class ResumeService extends ChangeNotifier {
       ],
       certifications: [],
       customSections: [],
+      targetJobTitle: '',
+      targetJobDescription: '',
       lastUpdated: DateTime.now(),
     );
   }

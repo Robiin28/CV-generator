@@ -3,51 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/resume_model.dart';
 import '../../../core/services/resume_service.dart';
+import 'ai_input_field.dart';
 
 class ProjectsForm extends StatelessWidget {
   const ProjectsForm({super.key});
-
-  Widget _buildInputField(BuildContext context, String label, String initialValue, Function(String) onChanged, {int maxLines = 1}) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label.toUpperCase(),
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: isDark ? Colors.white54 : const Color(0xFF64748B),
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 6),
-        TextFormField(
-          initialValue: initialValue,
-          maxLines: maxLines,
-          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
-          decoration: InputDecoration(
-            fillColor: isDark ? const Color(0xFF1E293B) : Colors.white,
-            filled: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.white10 : Colors.grey.shade300),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(8),
-              borderSide: BorderSide(color: isDark ? Colors.blueAccent : const Color(0xFF0A2540), width: 2),
-            ),
-            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          ),
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -106,12 +65,17 @@ class ProjectsForm extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(
-                          child: _buildInputField(context, 'Project Name', project.name, (val) {
-                            final current = context.read<ResumeService>().currentResume?.projects ?? [];
-                            final newList = List<Project>.from(current);
-                            newList[index] = newList[index].copyWith(name: val);
-                            context.read<ResumeService>().updateProjects(newList);
-                          }),
+                          child: AIInputField(
+                            label: 'Project Name', 
+                            initialValue: project.name, 
+                            onChanged: (val) {
+                              final current = context.read<ResumeService>().currentResume?.projects ?? [];
+                              final newList = List<Project>.from(current);
+                              newList[index] = newList[index].copyWith(name: val);
+                              context.read<ResumeService>().updateProjects(newList);
+                            }, 
+                            aiContext: 'professional project name'
+                          ),
                         ),
                         const SizedBox(width: 16),
                         IconButton(
@@ -125,26 +89,41 @@ class ProjectsForm extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 20),
-                    _buildInputField(context, 'Technologies', project.technologies, (val) {
-                      final current = context.read<ResumeService>().currentResume?.projects ?? [];
-                      final newList = List<Project>.from(current);
-                      newList[index] = newList[index].copyWith(technologies: val);
-                      context.read<ResumeService>().updateProjects(newList);
-                    }),
+                    AIInputField(
+                      label: 'Technologies', 
+                      initialValue: project.technologies, 
+                      onChanged: (val) {
+                        final current = context.read<ResumeService>().currentResume?.projects ?? [];
+                        final newList = List<Project>.from(current);
+                        newList[index] = newList[index].copyWith(technologies: val);
+                        context.read<ResumeService>().updateProjects(newList);
+                      }, 
+                      aiContext: 'list of technologies for a software project'
+                    ),
                     const SizedBox(height: 20),
-                    _buildInputField(context, 'Description', project.description, (val) {
-                      final current = context.read<ResumeService>().currentResume?.projects ?? [];
-                      final newList = List<Project>.from(current);
-                      newList[index] = newList[index].copyWith(description: val);
-                      context.read<ResumeService>().updateProjects(newList);
-                    }, maxLines: 3),
+                    AIInputField(
+                      label: 'Description', 
+                      initialValue: project.description, 
+                      maxLines: 3,
+                      onChanged: (val) {
+                        final current = context.read<ResumeService>().currentResume?.projects ?? [];
+                        final newList = List<Project>.from(current);
+                        newList[index] = newList[index].copyWith(description: val);
+                        context.read<ResumeService>().updateProjects(newList);
+                      }, 
+                      aiContext: 'professional description for the project ${project.name} using ${project.technologies}'
+                    ),
                     const SizedBox(height: 20),
-                    _buildInputField(context, 'View Profile Link (e.g. LinkedIn URL)', project.link ?? '', (val) {
-                      final current = context.read<ResumeService>().currentResume?.projects ?? [];
-                      final newList = List<Project>.from(current);
-                      newList[index] = newList[index].copyWith(link: val);
-                      context.read<ResumeService>().updateProjects(newList);
-                    }),
+                    AIInputField(
+                      label: 'View Profile Link (e.g. LinkedIn URL)', 
+                      initialValue: project.link ?? '', 
+                      onChanged: (val) {
+                        final current = context.read<ResumeService>().currentResume?.projects ?? [];
+                        final newList = List<Project>.from(current);
+                        newList[index] = newList[index].copyWith(link: val);
+                        context.read<ResumeService>().updateProjects(newList);
+                      }
+                    ),
                   ],
                 ),
               ),
